@@ -192,7 +192,7 @@ function onDocumentMouseMove(event) {
 function createLine(i) {
 	const line = new SmoothLine(parseInt(params.resolution), params.smooth);
 	line.angleBisection = params.angleBisection;
-	line.color = new THREE.Color(0x000000);
+	line.color = new THREE.Color(0xFF0000);
 	line.fadeColor = new THREE.Color(0xFFFFFF);
 	line.strokeWidth = params.strokeWidth; // 2f
 	line.smoothWidth = params.smoothWidth; // 3f
@@ -209,14 +209,24 @@ function createLine(i) {
 }
 
 function createLines() {
-  lineMaterial = new THREE.MeshBasicMaterial({
-  	color: 0xFFFFFF,
-    opacity: params.opacity,
-  	side: THREE.DoubleSide,
-  	vertexColors: THREE.VertexColors,
-  	blending: THREE.NormalBlending, // THREE.SubtractiveBlending, // THREE.AdditiveBlending
-  	transparent: true,
-  	// depthTest: false,
+  // lineMaterial = new THREE.MeshBasicMaterial({
+  // 	color: 0xFFFFFF,
+  //   opacity: params.opacity,
+  // 	side: THREE.DoubleSide,
+  // 	vertexColors: THREE.VertexColors,
+  // 	blending: THREE.NormalBlending, // THREE.SubtractiveBlending, // THREE.AdditiveBlending
+  // 	transparent: true,
+  // 	// depthTest: false,
+  // });
+
+  lineMaterial = new THREE.RawShaderMaterial({
+    uniforms: {
+      time: { value: 1.0 }
+    },
+    vertexShader: document.getElementById( 'vertexShader' ).textContent,
+    fragmentShader: document.getElementById( 'fragmentShader' ).textContent,
+    side: THREE.DoubleSide,
+    transparent: true,
   });
 
 	for( var i = 0; i < params.amount; i++ ) {
