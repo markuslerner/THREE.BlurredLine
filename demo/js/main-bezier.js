@@ -235,8 +235,8 @@ function onDocumentMouseMove(event) {
   mouse.x = event.clientX - window.innerWidth / 2;
   mouse.y = -event.clientY + window.innerHeight / 2;
 
-  endPoint.x = mouse.x * 2.0;
-  endPoint.y = mouse.y * 2.0;
+  endPoint.x = mouse.x;
+  endPoint.y = mouse.y;
   endPoint.z = 0;
 
   handlesGeometry.verticesNeedUpdate = true;
