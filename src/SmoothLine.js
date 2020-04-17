@@ -5,8 +5,9 @@ var RIGHT_SMOOTH_LINE = 3;
 
 class SmoothLine {
 
-  constructor(resolution = 1) {
-    this.resolution = resolution;
+  constructor(resolution = 1, smooth = true) {
+    this._resolution = resolution;
+    this._smooth = smooth;
 
     this.lineAtoms = [];
 
@@ -17,13 +18,10 @@ class SmoothLine {
     this.smoothWidths = [];
     this.colors = [];
 
-    this.resolution;
-
     this.upVector = new THREE.Vector3(0.0, 0.0, 1.0);
 
     this.dynamic = false;
     this.closed = false;
-    this.smooth = true;
     this.stippled = false;
 
     this.useContantColor = true;
@@ -43,33 +41,33 @@ class SmoothLine {
     this.lineVertices = [];
     this.curve = null; // curve to read vertices from
 
-    for(let i = 0; i < this.resolution + 1; i++) {
+    for(let i = 0; i < this._resolution + 1; i++) {
       this.lineVertices[i] = new THREE.Vector3();
     }
 
     if(this.colors === null) {
       this.colors = [];
-      for(let i = 0; i < this.resolution + 1; i++) {
+      for(let i = 0; i < this._resolution + 1; i++) {
         this.colors[i] = new THREE.Color();
       }
     }
 
     if(this.strokeWidths === null) {
       this.strokeWidths = [];
-      for(let i = 0; i < this.resolution + 1; i++) {
+      for(let i = 0; i < this._resolution + 1; i++) {
         this.strokeWidths[i] = 1.0;
       }
     }
 
     if(this.smoothWidths === null) {
       this.smoothWidths = [];
-      for(let i = 0; i < this.resolution + 1; i++) {
+      for(let i = 0; i < this._resolution + 1; i++) {
         this.smoothWidths[i] = 0.0;
       }
     }
 
     this.lineShapeVertices = [];
-    for(let i = 0; i < this.resolution + 1; i++) {
+    for(let i = 0; i < this._resolution + 1; i++) {
       var vertices = [];
       vertices[LEFT_LINE] = new THREE.Vector3();
       vertices[RIGHT_LINE] = new THREE.Vector3();
@@ -83,7 +81,8 @@ class SmoothLine {
   }
 
   createGeometry() {
-    var trianglesCount = (this.lineShapeVertices.length - 1) * 6;
+    console.log('createGeometry()');
+    var trianglesCount = (this.lineShapeVertices.length - 1) * (this._smooth ? 6 : 2);
     this.geometry = new THREE.BufferGeometry();
     this.positions = new Float32Array(trianglesCount * 3 * 3);
     this.normals = new Float32Array(trianglesCount * 3 * 3);
@@ -97,15 +96,15 @@ class SmoothLine {
 
   updateGeometry(filled = false) {
     if(this.curve !== null) {
-      // console.log( this.curve.getPoints(this.resolution) );
-      this.setLineVertices(this.curve.getPoints(this.resolution));
+      // console.log( this.curve.getPoints(this._resolution) );
+      this.setLineVertices(this.curve.getPoints(this._resolution));
     }
 
-    if(!this.useContantColor && this.colors.length <= this.resolution) {
+    if(!this.useContantColor && this.colors.length <= this._resolution) {
       console.error('Line.updateGeometry: colors Array length needs to be resolution + 1', this);
     }
 
-    if(this.lineVertices != null) {
+    if(this.lineVertices !== null) {
       this.updateLineShapeVertices();
 
       var lineShapeVertices = this.lineShapeVertices;
@@ -116,7 +115,7 @@ class SmoothLine {
       }
 
       for(let i = 0; i < this.lineShapeVertices.length - 1; i++) {
-        var index = i * 3 * 3 * 6;
+        var index = i * 3 * 3 * (this._smooth ? 6 : 2);
 
         if(filled) {
           // lineAtoms[i].setVertices(this.lineShapeVertices[i][LEFT_LINE],
@@ -140,23 +139,25 @@ class SmoothLine {
           updatePosition(this.positions, index + 12, lineShapeVertices[i + 1][LEFT_LINE]);
           updatePosition(this.positions, index + 15, lineShapeVertices[i + 1][RIGHT_LINE]);
 
-          // left smooth
-          updatePosition(this.positions, index + 18, lineShapeVertices[i][LEFT_LINE]);
-          updatePosition(this.positions, index + 21, lineShapeVertices[i][LEFT_SMOOTH_LINE]);
-          updatePosition(this.positions, index + 24, lineShapeVertices[i + 1][LEFT_SMOOTH_LINE]);
+          if(this._smooth) {
+            // left smooth
+            updatePosition(this.positions, index + 18, lineShapeVertices[i][LEFT_LINE]);
+            updatePosition(this.positions, index + 21, lineShapeVertices[i][LEFT_SMOOTH_LINE]);
+            updatePosition(this.positions, index + 24, lineShapeVertices[i + 1][LEFT_SMOOTH_LINE]);
 
-          updatePosition(this.positions, index + 27, lineShapeVertices[i][LEFT_LINE]);
-          updatePosition(this.positions, index + 30, lineShapeVertices[i + 1][LEFT_SMOOTH_LINE]);
-          updatePosition(this.positions, index + 33, lineShapeVertices[i + 1][LEFT_LINE]);
+            updatePosition(this.positions, index + 27, lineShapeVertices[i][LEFT_LINE]);
+            updatePosition(this.positions, index + 30, lineShapeVertices[i + 1][LEFT_SMOOTH_LINE]);
+            updatePosition(this.positions, index + 33, lineShapeVertices[i + 1][LEFT_LINE]);
 
-          // right smooth
-          updatePosition(this.positions, index + 36, lineShapeVertices[i][RIGHT_LINE]);
-          updatePosition(this.positions, index + 39, lineShapeVertices[i + 1][RIGHT_LINE]);
-          updatePosition(this.positions, index + 42, lineShapeVertices[i][RIGHT_SMOOTH_LINE]);
+            // right smooth
+            updatePosition(this.positions, index + 36, lineShapeVertices[i][RIGHT_LINE]);
+            updatePosition(this.positions, index + 39, lineShapeVertices[i + 1][RIGHT_LINE]);
+            updatePosition(this.positions, index + 42, lineShapeVertices[i][RIGHT_SMOOTH_LINE]);
 
-          updatePosition(this.positions, index + 45, lineShapeVertices[i][RIGHT_SMOOTH_LINE]);
-          updatePosition(this.positions, index + 48, lineShapeVertices[i + 1][RIGHT_LINE]);
-          updatePosition(this.positions, index + 51, lineShapeVertices[i + 1][RIGHT_SMOOTH_LINE]);
+            updatePosition(this.positions, index + 45, lineShapeVertices[i][RIGHT_SMOOTH_LINE]);
+            updatePosition(this.positions, index + 48, lineShapeVertices[i + 1][RIGHT_LINE]);
+            updatePosition(this.positions, index + 51, lineShapeVertices[i + 1][RIGHT_SMOOTH_LINE]);
+          }
 
           // flat face normals
           if(this.calculateNormals) {
@@ -169,20 +170,24 @@ class SmoothLine {
               cb.cross(ab);
               cb.normalize();
               updatePosition(this.normals, index + c, cb);
-              updatePosition(this.normals, index + c + 3, cb);
-              updatePosition(this.normals, index + c + 6, cb);
+              if(this._smooth) {
+                updatePosition(this.normals, index + c + 3, cb);
+                updatePosition(this.normals, index + c + 6, cb);
+              }
             }
           } else {
             for(let c = 0; c < 6 * 9; c += 9) {
               updatePosition(this.normals, index + c, this.upVector);
-              updatePosition(this.normals, index + c + 3, this.upVector);
-              updatePosition(this.normals, index + c + 6, this.upVector);
+              if(this._smooth) {
+                updatePosition(this.normals, index + c + 3, this.upVector);
+                updatePosition(this.normals, index + c + 6, this.upVector);
+              }
             }
           }
 
         }
 
-        if(this.useContantColor || this.colors.length <= this.resolution) {
+        if(this.useContantColor || this.colors.length <= this._resolution) {
           var c = colorWithOpacity;
 
           // stroke
@@ -194,23 +199,25 @@ class SmoothLine {
           updateColor(this.vertexColors, index + 12, c);
           updateColor(this.vertexColors, index + 15, c);
 
-          // left smooth
-          updateColor(this.vertexColors, index + 18, c);
-          updateColor(this.vertexColors, index + 21, this.fadeColor);
-          updateColor(this.vertexColors, index + 24, this.fadeColor);
+          if(this._smooth) {
+            // left smooth
+            updateColor(this.vertexColors, index + 18, c);
+            updateColor(this.vertexColors, index + 21, this.fadeColor);
+            updateColor(this.vertexColors, index + 24, this.fadeColor);
 
-          updateColor(this.vertexColors, index + 27, c);
-          updateColor(this.vertexColors, index + 30, this.fadeColor);
-          updateColor(this.vertexColors, index + 33, c);
+            updateColor(this.vertexColors, index + 27, c);
+            updateColor(this.vertexColors, index + 30, this.fadeColor);
+            updateColor(this.vertexColors, index + 33, c);
 
-          // right smooth
-          updateColor(this.vertexColors, index + 36, c);
-          updateColor(this.vertexColors, index + 39, c);
-          updateColor(this.vertexColors, index + 42, this.fadeColor);
+            // right smooth
+            updateColor(this.vertexColors, index + 36, c);
+            updateColor(this.vertexColors, index + 39, c);
+            updateColor(this.vertexColors, index + 42, this.fadeColor);
 
-          updateColor(this.vertexColors, index + 45, this.fadeColor);
-          updateColor(this.vertexColors, index + 48, c);
-          updateColor(this.vertexColors, index + 51, this.fadeColor);
+            updateColor(this.vertexColors, index + 45, this.fadeColor);
+            updateColor(this.vertexColors, index + 48, c);
+            updateColor(this.vertexColors, index + 51, this.fadeColor);
+          }
 
         } else {
           var c = this.colors[i].clone();
@@ -231,24 +238,25 @@ class SmoothLine {
           updateColor(this.vertexColors, index + 12, c2);
           updateColor(this.vertexColors, index + 15, c2);
 
-          // left smooth
-          updateColor(this.vertexColors, index + 18, c);
-          updateColor(this.vertexColors, index + 21, this.fadeColor);
-          updateColor(this.vertexColors, index + 24, this.fadeColor);
+          if(this._smooth) {
+            // left smooth
+            updateColor(this.vertexColors, index + 18, c);
+            updateColor(this.vertexColors, index + 21, this.fadeColor);
+            updateColor(this.vertexColors, index + 24, this.fadeColor);
 
-          updateColor(this.vertexColors, index + 27, c);
-          updateColor(this.vertexColors, index + 30, this.fadeColor);
-          updateColor(this.vertexColors, index + 33, c2);
+            updateColor(this.vertexColors, index + 27, c);
+            updateColor(this.vertexColors, index + 30, this.fadeColor);
+            updateColor(this.vertexColors, index + 33, c2);
 
-          // right smooth
-          updateColor(this.vertexColors, index + 36, c);
-          updateColor(this.vertexColors, index + 39, c2);
-          updateColor(this.vertexColors, index + 42, this.fadeColor);
+            // right smooth
+            updateColor(this.vertexColors, index + 36, c);
+            updateColor(this.vertexColors, index + 39, c2);
+            updateColor(this.vertexColors, index + 42, this.fadeColor);
 
-          updateColor(this.vertexColors, index + 45, this.fadeColor);
-          updateColor(this.vertexColors, index + 48, c2);
-          updateColor(this.vertexColors, index + 51, this.fadeColor);
-
+            updateColor(this.vertexColors, index + 45, this.fadeColor);
+            updateColor(this.vertexColors, index + 48, c2);
+            updateColor(this.vertexColors, index + 51, this.fadeColor);
+          }
         }
 
       }
@@ -276,10 +284,6 @@ class SmoothLine {
 
   getLineAtoms() {
     return this.lineAtoms;
-  }
-
-  getResolution() {
-    return this.resolution;
   }
 
   getSmoothWidths() {
@@ -334,10 +338,6 @@ class SmoothLine {
     this.lineAtoms = lineAtoms;
   }
 
-  setResolution(resolution) {
-    this.resolution = resolution;
-  }
-
   setSmoothWidths(smoothWidths) {
     this.smoothWidths = smoothWidths;
   }
@@ -354,16 +354,8 @@ class SmoothLine {
     this.strokeWidths = strokeWidths;
   }
 
-  setSmooth(smooth) {
-    this.smooth = smooth;
-  }
-
   isDynamic() {
     return this.dynamic;
-  }
-
-  isSmooth() {
-    return this.smooth;
   }
 
   isUseContantColor() {
@@ -451,11 +443,14 @@ class SmoothLine {
 
     var lineVertices = this.lineVertices;
 
-    for(let i = 0; i < this.resolution; i++) {
+    for(let i = 0; i < this._resolution; i++) {
       this.lineShapeVertices[i][LEFT_LINE].copy(lineVertices[i]);
       this.lineShapeVertices[i][RIGHT_LINE].copy(lineVertices[i]);
-      this.lineShapeVertices[i][LEFT_SMOOTH_LINE].copy(lineVertices[i]);
-      this.lineShapeVertices[i][RIGHT_SMOOTH_LINE].copy(lineVertices[i]);
+
+      if(this._smooth) {
+        this.lineShapeVertices[i][LEFT_SMOOTH_LINE].copy(lineVertices[i]);
+        this.lineShapeVertices[i][RIGHT_SMOOTH_LINE].copy(lineVertices[i]);
+      }
 
       // previous point to current point ---------------------------------
       distancePrevious = 0.0;
@@ -535,33 +530,38 @@ class SmoothLine {
       this.lineShapeVertices[i][LEFT_LINE].add(vectorSide);
       this.lineShapeVertices[i][RIGHT_LINE].sub(vectorSide);
 
-      if(this.useContantStrokeWidth) {
-        if(this.useContantSmoothWidth) {
-          vectorSideCopy.multiplyScalar((this.strokeWidth / 2.0 + this.smoothWidth));
+      if(this._smooth) {
+        if(this.useContantStrokeWidth) {
+          if(this.useContantSmoothWidth) {
+            vectorSideCopy.multiplyScalar((this.strokeWidth / 2.0 + this.smoothWidth));
+          } else {
+            vectorSideCopy.multiplyScalar((this.strokeWidth / 2.0 + this.smoothWidths[i]));
+          }
         } else {
-          vectorSideCopy.multiplyScalar((this.strokeWidth / 2.0 + this.smoothWidths[i]));
+          if(this.useContantSmoothWidth) {
+            vectorSideCopy.multiplyScalar((this.strokeWidths[i] / 2.0 + this.smoothWidth));
+          } else {
+            vectorSideCopy.multiplyScalar((this.strokeWidths[i] / 2.0 + this.smoothWidths[i]));
+          }
         }
-      } else {
-        if(this.useContantSmoothWidth) {
-          vectorSideCopy.multiplyScalar((this.strokeWidths[i] / 2.0 + this.smoothWidth));
-        } else {
-          vectorSideCopy.multiplyScalar((this.strokeWidths[i] / 2.0 + this.smoothWidths[i]));
-        }
-      }
 
-      this.lineShapeVertices[i][LEFT_SMOOTH_LINE].add(vectorSideCopy);
-      this.lineShapeVertices[i][RIGHT_SMOOTH_LINE].sub(vectorSideCopy);
+        this.lineShapeVertices[i][LEFT_SMOOTH_LINE].add(vectorSideCopy);
+        this.lineShapeVertices[i][RIGHT_SMOOTH_LINE].sub(vectorSideCopy);
+      }
     }
 
     // add the end point ===================================================
-    this.lineShapeVertices[this.resolution][LEFT_LINE].copy(lineVertices[this.resolution]);
-    this.lineShapeVertices[this.resolution][RIGHT_LINE].copy(lineVertices[this.resolution]);
-    this.lineShapeVertices[this.resolution][LEFT_SMOOTH_LINE].copy(lineVertices[this.resolution]);
-    this.lineShapeVertices[this.resolution][RIGHT_SMOOTH_LINE].copy(lineVertices[this.resolution]);
+    this.lineShapeVertices[this._resolution][LEFT_LINE].copy(lineVertices[this._resolution]);
+    this.lineShapeVertices[this._resolution][RIGHT_LINE].copy(lineVertices[this._resolution]);
+
+    if(this._smooth) {
+      this.lineShapeVertices[this._resolution][LEFT_SMOOTH_LINE].copy(lineVertices[this._resolution]);
+      this.lineShapeVertices[this._resolution][RIGHT_SMOOTH_LINE].copy(lineVertices[this._resolution]);
+    }
 
     // current point to next point -----------------------------------------
-    vectorCurrent.copy(lineVertices[this.resolution]);
-    vectorCurrent.sub(lineVertices[this.resolution - 1]);
+    vectorCurrent.copy(lineVertices[this._resolution]);
+    vectorCurrent.sub(lineVertices[this._resolution - 1]);
     distanceCurrent = vectorCurrent.length();
     if(distanceCurrent > 0) {
       vectorCurrent.multiplyScalar(1.0 / distanceCurrent); // normalize
@@ -578,8 +578,8 @@ class SmoothLine {
       }
       vectorSide.set(-vectorSide.y, vectorSide.x, vectorSide.z);
 
-      vectorSidePrevious.copy(this.lineShapeVertices[this.resolution - 1][LEFT_LINE]);
-      vectorSidePrevious.sub(lineVertices[this.resolution - 1]);
+      vectorSidePrevious.copy(this.lineShapeVertices[this._resolution - 1][LEFT_LINE]);
+      vectorSidePrevious.sub(lineVertices[this._resolution - 1]);
       if(vectorSide.dot(vectorSidePrevious) < 0) {
         vectorSide.negate();
       }
@@ -595,28 +595,30 @@ class SmoothLine {
     if(this.useContantStrokeWidth) {
       vectorSide.multiplyScalar(this.strokeWidth / 2.0);
     } else {
-      vectorSide.multiplyScalar(this.strokeWidths[this.resolution] / 2.0);
+      vectorSide.multiplyScalar(this.strokeWidths[this._resolution] / 2.0);
     }
 
-    this.lineShapeVertices[this.resolution][LEFT_LINE].add(vectorSide);
-    this.lineShapeVertices[this.resolution][RIGHT_LINE].sub(vectorSide);
+    this.lineShapeVertices[this._resolution][LEFT_LINE].add(vectorSide);
+    this.lineShapeVertices[this._resolution][RIGHT_LINE].sub(vectorSide);
 
-    if(this.useContantStrokeWidth) {
-      if(this.useContantSmoothWidth) {
-        vectorSideCopy.multiplyScalar((this.strokeWidth / 2.0 + this.smoothWidth));
+    if(this._smooth) {
+      if(this.useContantStrokeWidth) {
+        if(this.useContantSmoothWidth) {
+          vectorSideCopy.multiplyScalar((this.strokeWidth / 2.0 + this.smoothWidth));
+        } else {
+          vectorSideCopy.multiplyScalar((this.strokeWidth / 2.0 + this.smoothWidths[this._resolution]));
+        }
       } else {
-        vectorSideCopy.multiplyScalar((this.strokeWidth / 2.0 + this.smoothWidths[this.resolution]));
+        if(this.useContantSmoothWidth) {
+          vectorSideCopy.multiplyScalar((this.strokeWidths[this._resolution] / 2.0 + this.smoothWidth));
+        } else {
+          vectorSideCopy.multiplyScalar((this.strokeWidths[this._resolution] / 2.0 + this.smoothWidths[this._resolution]));
+        }
       }
-    } else {
-      if(this.useContantSmoothWidth) {
-        vectorSideCopy.multiplyScalar((this.strokeWidths[this.resolution] / 2.0 + this.smoothWidth));
-      } else {
-        vectorSideCopy.multiplyScalar((this.strokeWidths[this.resolution] / 2.0 + this.smoothWidths[this.resolution]));
-      }
+
+      this.lineShapeVertices[this._resolution][LEFT_SMOOTH_LINE].add(vectorSideCopy);
+      this.lineShapeVertices[this._resolution][RIGHT_SMOOTH_LINE].sub(vectorSideCopy);
     }
-
-    this.lineShapeVertices[this.resolution][LEFT_SMOOTH_LINE].add(vectorSideCopy);
-    this.lineShapeVertices[this.resolution][RIGHT_SMOOTH_LINE].sub(vectorSideCopy);
 
   }
 

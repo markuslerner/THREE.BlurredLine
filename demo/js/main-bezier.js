@@ -79,6 +79,7 @@ var Params = function() {
   this.angleBisection = false;
 	this.strokeWidth = 10;
   this.smoothWidth = 20;
+  this.smooth = true;
 	this.opacity = 1.0;
   this.wireframe = false;
 	// this.dashArray = 0.6;
@@ -128,6 +129,7 @@ window.addEventListener( 'load', function() {
 			l.updateGeometry();
 		} );
 	} );
+  gui.add( params, 'smooth' ).onChange( update );
 	gui.add( params, 'opacity', 0.0, 1.0 ).onChange(function() {
     lineMaterial.opacity = params.opacity;
 		lines.forEach( function( l ) {
@@ -167,13 +169,12 @@ function init() {
 function createLine(i) {
 	console.log('createLine()');
 
-	const line = new SmoothLine(parseInt(params.resolution));
+	const line = new SmoothLine(parseInt(params.resolution), params.smooth);
 	line.setClosed(false);
 	line.setUseAngleBisection(params.angleBisection);
 	line.setUseContantStrokeWidth(true);
 	line.setColor(new THREE.Color(0x000000));
 	line.setFadeColor(new THREE.Color(0xFFFFFF));
-	line.setSmooth(true);
 	line.setStrokeWidth(params.strokeWidth); // 2f
 	line.setSmoothWidth(params.smoothWidth); // 3f
 	// line.setUpVector(new Vector3(1.0, 0.0, 1.0));
