@@ -7,7 +7,7 @@ body{
   background-color: #fff;
   background-image: linear-gradient(#ccc 1px, transparent 1px),linear-gradient(90deg, #ccc 1px, transparent 1px),linear-gradient(rgba(0,0,0,.1) 1px, transparent 1px),linear-gradient(90deg, rgba(0,0,0,.1) 1px, transparent 1px);
   background-size: 100px 100px, 100px 100px, 10px 10px, 10px 10px;
-  background-position: -1px -1px, -1px -1px, -1px -1px, -1px -1px;
+  background-position: calc(50vw - 2px) calc(50vh - 2px), calc(50vw - 2px) calc(50vh - 2px), calc(50vw - 2px) calc(50vh - 2px), calc(50vw - 2px) calc(50vh - 2px);
 }
 h1{
   font-weight: 300; font-size: 24px; margin-bottom: .5em;

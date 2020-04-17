@@ -7,13 +7,11 @@ document.body.appendChild(stats.dom);
 var container = document.getElementById( 'container' );
 
 var scene = new THREE.Scene();
-// var camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, .1, 1000 );
-// var camera = new THREE.OrthographicCamera( window.innerWidth / - 2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / - 2, 1, 1000 );
-// camera.position.set( 50, 10, 0 );
-// var frustumSize = 1000;
+var camera = new THREE.OrthographicCamera( window.innerWidth / - 2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / - 2, 1, 1000 );
+camera.position.set( 0, 0, 500 );
 
-var camera = new THREE.PerspectiveCamera(27, window.innerWidth / window.innerHeight, 1, 3500);
-camera.position.z = 2750;
+// var camera = new THREE.PerspectiveCamera(27, window.innerWidth / window.innerHeight, 1, 3500);
+// camera.position.z = 2000;
 
 var renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true });
 renderer.setSize( window.innerWidth, window.innerHeight );
@@ -28,9 +26,9 @@ var resolution = new THREE.Vector2( window.innerWidth, window.innerHeight );
 var endPoint = new THREE.Vector3(0, 0, 0);
 
 var curve = new THREE.CubicBezierCurve3(
-  new THREE.Vector3(-1000, 0, -500),
-  new THREE.Vector3(-100, 0, 500),
-  new THREE.Vector3(400, 450, 500),
+  new THREE.Vector3(-500, 0, -500),
+  new THREE.Vector3(0, 0, 500),
+  new THREE.Vector3(0, 300, 500),
   endPoint,
 );
 
@@ -75,8 +73,8 @@ var Params = function() {
 	this.amount = 1;
   this.resolution = 50;
   this.angleBisection = false;
-	this.strokeWidth = 10;
-  this.smoothWidth = 20;
+	this.strokeWidth = 2;
+  this.smoothWidth = 10;
   this.smooth = true;
 	this.opacity = 1.0;
   this.wireframe = false;
@@ -103,13 +101,13 @@ window.addEventListener( 'load', function() {
 			l.updateGeometry();
 		} );
 	} );
-	gui.add( params, 'strokeWidth', 1, 500 ).onChange(function() {
+	gui.add( params, 'strokeWidth', 1, 250 ).onChange(function() {
 		lines.forEach( function( l ) {
 			l.strokeWidth = params.strokeWidth;
 			l.updateGeometry();
 		} );
 	} );
-  gui.add( params, 'smoothWidth', 1, 500 ).onChange(function() {
+  gui.add( params, 'smoothWidth', 1, 250 ).onChange(function() {
 		lines.forEach( function( l ) {
 			l.smoothWidth = params.smoothWidth;
 			l.updateGeometry();
@@ -191,12 +189,10 @@ function onWindowResize() {
 	var w = container.clientWidth;
 	var h = container.clientHeight;
 
-	var aspect = w / h;
-
-	// camera.left   = - frustumSize * aspect / 2;
-	// camera.right  =   frustumSize * aspect / 2;
-	// camera.top    =   frustumSize / 2;
-	// camera.bottom = - frustumSize / 2;
+  camera.left   = window.innerWidth / - 2;
+	camera.right  =  window.innerWidth / 2;
+	camera.top    = window.innerHeight / 2;
+	camera.bottom = window.innerHeight / - 2;
 
 	camera.updateProjectionMatrix();
 
