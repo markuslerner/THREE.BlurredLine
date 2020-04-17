@@ -20,14 +20,12 @@ class SmoothLine {
 
     this.upVector = new THREE.Vector3(0.0, 0.0, 1.0);
 
-    this.dynamic = false;
     this.closed = false;
-    this.stippled = false;
 
     this.useContantColor = true;
     this.useContantStrokeWidth = true;
     this.useContantSmoothWidth = true;
-    this.useAngleBisection = false; // true: good for 2d
+    this.angleBisection = false; // true: good for 2d
 
     this.lineShapeVertices = [[]];
 
@@ -81,7 +79,6 @@ class SmoothLine {
   }
 
   createGeometry() {
-    console.log('createGeometry()');
     var trianglesCount = (this.lineShapeVertices.length - 1) * (this._smooth ? 6 : 2);
     this.geometry = new THREE.BufferGeometry();
     this.positions = new Float32Array(trianglesCount * 3 * 3);
@@ -97,7 +94,7 @@ class SmoothLine {
   updateGeometry(filled = false) {
     if(this.curve !== null) {
       // console.log( this.curve.getPoints(this._resolution) );
-      this.setLineVertices(this.curve.getPoints(this._resolution));
+      this.lineVertices = this.curve.getPoints(this._resolution);
     }
 
     if(!this.useContantColor && this.colors.length <= this._resolution) {
@@ -270,158 +267,6 @@ class SmoothLine {
     }
   }
 
-  getColor() {
-    return this.color;
-  }
-
-  getFadeColor() {
-    return this.fadeColor;
-  }
-
-  getColors() {
-    return this.colors;
-  }
-
-  getLineAtoms() {
-    return this.lineAtoms;
-  }
-
-  getSmoothWidths() {
-    return this.smoothWidths;
-  }
-
-  getUpVector() {
-    return this.upVector;
-  }
-
-  getLineVertices() {
-    return this.lineVertices;
-  }
-
-  getVertices() {
-    return this.lineVertices;
-  }
-
-  getStrokeWidths() {
-    return this.strokeWidths;
-  }
-
-  setCurve(curve) {
-    this.curve = curve;
-  }
-
-  setVertices(lineVertices) {
-    this.lineVertices = lineVertices;
-  }
-
-  setDynamic(dynamic) {
-    this.dynamic = dynamic;
-  }
-
-  setColor(color) {
-    this.color = color;
-  }
-
-  setColors(colors) {
-    this.colors = colors;
-  }
-
-  setFadeColor(fadeColor) {
-    this.fadeColor = fadeColor;
-  }
-
-  setOpacity(opacity) {
-    this.opacity = opacity;
-  }
-
-  setLineAtoms(lineAtoms) {
-    this.lineAtoms = lineAtoms;
-  }
-
-  setSmoothWidths(smoothWidths) {
-    this.smoothWidths = smoothWidths;
-  }
-
-  setUpVector(upVector) {
-    this.upVector = upVector;
-  }
-
-  setLineVertices(lineVertices) {
-    this.lineVertices = lineVertices;
-  }
-
-  setStrokeWidths(strokeWidths) {
-    this.strokeWidths = strokeWidths;
-  }
-
-  isDynamic() {
-    return this.dynamic;
-  }
-
-  isUseContantColor() {
-    return this.useContantColor;
-  }
-
-  isUseContantSmoothWidth() {
-    return this.useContantSmoothWidth;
-  }
-
-  isUseContantStrokeWidth() {
-    return this.useContantStrokeWidth;
-  }
-
-  setUseContantColor(useContantColor) {
-    this.useContantColor = useContantColor;
-  }
-
-  setUseContantSmoothWidth(useContantSmoothWidth) {
-    this.useContantSmoothWidth = useContantSmoothWidth;
-  }
-
-  setUseContantStrokeWidth(useContantStrokeWidth) {
-    this.useContantStrokeWidth = useContantStrokeWidth;
-  }
-
-  setUseAngleBisection(useAngleBisection) {
-    this.useAngleBisection = useAngleBisection;
-  }
-
-  isUseAngleBisection() {
-    return this.useAngleBisection;
-  }
-
-  getSmoothWidth() {
-    return this.smoothWidth;
-  }
-
-  getStrokeWidth() {
-    return this.strokeWidth;
-  }
-
-  setSmoothWidth(smoothWidth) {
-    this.smoothWidth = smoothWidth;
-  }
-
-  setStrokeWidth(strokeWidth) {
-    this.strokeWidth = strokeWidth;
-  }
-
-  isClosed() {
-    return this.closed;
-  }
-
-  setClosed(closed) {
-    this.closed = closed;
-  }
-
-  isStippled() {
-    return this.stippled;
-  }
-
-  setStippled(stippled) {
-    this.stippled = stippled;
-  }
-
   getLength() {
     let l = 0.0;
     for(let i = 0; i < this.lineVertices.length - 1; i++) {
@@ -480,7 +325,7 @@ class SmoothLine {
         vectorCurrent.multiplyScalar(1.0 / distanceCurrent); // normalize
       }
 
-      if(this.useAngleBisection) {
+      if(this.angleBisection) {
         // calcuate angle bisection (good for 2d):
         vectorSide.copy(vectorCurrent);
         vectorSide.add(vectorPrevious);
@@ -567,7 +412,7 @@ class SmoothLine {
       vectorCurrent.multiplyScalar(1.0 / distanceCurrent); // normalize
     }
 
-    if(this.useAngleBisection) {
+    if(this.angleBisection) {
       // calcuate angle bisection (good for 2d):
 
       if(closed) {
@@ -674,7 +519,7 @@ class SmoothLine {
   }
 
   toString() {
-    return 'AbstractLine';
+    return 'SmoothLine';
   }
 
 }

@@ -72,8 +72,6 @@ scene.add(handles);
 var mouse = new THREE.Vector2();
 
 var Params = function() {
-	// this.curves = true;
-	// this.circles = false;
 	this.amount = 1;
   this.resolution = 50;
   this.angleBisection = false;
@@ -82,22 +80,7 @@ var Params = function() {
   this.smooth = true;
 	this.opacity = 1.0;
   this.wireframe = false;
-	// this.dashArray = 0.6;
-	// this.dashOffset = 0;
-	// this.dashRatio = 0.5;
-	// this.taper = 'parabolic';
-	// this.strokes = false;
-	// this.sizeAttenuation = false;
-	// this.animateWidth = false;
-	// this.spread = false;
 	this.autoRotate = false;
-	// this.autoUpdate = true;
-	// this.animateVisibility = false;
-	// this.animateDashOffset = false;
-	// this.update = function() {
-	// 	clearLines();
-	// 	createLines();
-	// }
 };
 
 var params = new Params();
@@ -112,11 +95,14 @@ window.addEventListener( 'load', function() {
 		// }
 	}
 
-	// gui.add( params, 'curves' ).onChange( update );
-	// gui.add( params, 'circles' ).onChange( update );
 	gui.add( params, 'amount', 1, 1000 ).onChange( update );
   gui.add( params, 'resolution', 1, 100 ).onChange( update );
-  gui.add( params, 'angleBisection' ).onChange( update );
+  gui.add( params, 'angleBisection' ).onChange(function() {
+		lines.forEach( function( l ) {
+			l.angleBisection = params.angleBisection;
+			l.updateGeometry();
+		} );
+	} );
 	gui.add( params, 'strokeWidth', 1, 500 ).onChange(function() {
 		lines.forEach( function( l ) {
 			l.strokeWidth = params.strokeWidth;
@@ -138,19 +124,6 @@ window.addEventListener( 'load', function() {
 	} );
   gui.add( params, 'wireframe' ).onChange( update );
   gui.add( params, 'autoRotate' );
-	// gui.add( params, 'dashArray', 0, 3 ).onChange( update );
-	// gui.add( params, 'dashRatio', 0, 1 ).onChange( update );
-	// gui.add( params, 'taper', [ 'none', 'linear', 'parabolic', 'wavy' ] ).onChange( update );
-	// gui.add( params, 'strokes' ).onChange( update );
-	// gui.add( params, 'sizeAttenuation' ).onChange( update );
-	// gui.add( params, 'autoUpdate' ).onChange( update );
-	// gui.add( params, 'update' );
-	// gui.add( params, 'animateWidth' );
-	// gui.add( params, 'spread' );
-	// gui.add( params, 'autoRotate' );
-	// gui.add( params, 'animateVisibility' );
-	// gui.add( params, 'animateDashOffset' );
-
 } );
 
 
@@ -167,24 +140,20 @@ function init() {
 
 
 function createLine(i) {
-	console.log('createLine()');
-
 	const line = new SmoothLine(parseInt(params.resolution), params.smooth);
-	line.setClosed(false);
-	line.setUseAngleBisection(params.angleBisection);
-	line.setUseContantStrokeWidth(true);
-	line.setColor(new THREE.Color(0x000000));
-	line.setFadeColor(new THREE.Color(0xFFFFFF));
-	line.setStrokeWidth(params.strokeWidth); // 2f
-	line.setSmoothWidth(params.smoothWidth); // 3f
-	// line.setUpVector(new Vector3(1.0, 0.0, 1.0));
-	line.setCurve(curve);
+	line.angleBisection = params.angleBisection;
+	line.color = new THREE.Color(0x000000);
+	line.fadeColor = new THREE.Color(0xFFFFFF);
+	line.strokeWidth = params.strokeWidth; // 2f
+	line.smoothWidth = params.smoothWidth; // 3f
+	line.upVector = new THREE.Vector3(0.0, 0.0, 1.0);
+	line.curve = curve;
 	line.updateGeometry();
 
 	lines.push( line );
 
 	line.mesh = new THREE.Mesh(line.geometry, params.wireframe ? wireframeMaterial : lineMaterial);
-  line.mesh.position.x += i * 20;
+  line.mesh.position.x += i * 10;
 	scene.add(line.mesh);
 
 }
