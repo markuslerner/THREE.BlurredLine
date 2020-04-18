@@ -5,7 +5,7 @@ var curve, endPoint, handlesGeometry, lines = [], lineMaterial, params, wirefram
 
 var Params = function() {
   this.amount = 1;
-  this.resolution = 1;
+  this.resolution = 50;
   this.angleBisection = false;
   this.strokeWidth = 2;
   this.smoothWidth = 10;

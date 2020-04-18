@@ -29,7 +29,7 @@ class SmoothLine {
 
     this.lineShapeVertices = [[]];
 
-    this.calculateNormals = true;
+    // this.calculateNormals = true;
 
     this.color = new THREE.Color();
     // this.fadeColor = new THREE.Color(0x000000);
@@ -82,23 +82,12 @@ class SmoothLine {
     var trianglesCount = (this.lineShapeVertices.length - 1) * (this._smooth ? 6 : 2);
     this.geometry = new THREE.BufferGeometry();
     this.positions = new Float32Array(trianglesCount * 3 * 3);
-    // this.positions = [];
-    // for(var i = 0; i < trianglesCount * 3 * 3; i++) {
-    //   this.positions.push( Math.random() - 0.5 );
-    // }
-    this.normals = new Float32Array(trianglesCount * 3 * 3);
+    // this.normals = new Float32Array(trianglesCount * 3 * 3);
     this.vertexColors = new Float32Array(trianglesCount * 3 * 4);
-    // this.vertexColors = [];
-    // for(var i = 0; i < trianglesCount * 3 * 4; i++) {
-    //   this.vertexColors.push( Math.random() * 255 );
-    // }
 
     var positionAttribute = new THREE.BufferAttribute(this.positions, 3);
-    // var positionAttribute = new THREE.Float32BufferAttribute(this.positions, 3);
-    var normalAttribute = new THREE.BufferAttribute(this.normals, 3);
+    // var normalAttribute = new THREE.BufferAttribute(this.normals, 3);
     var colorAttribute = new THREE.BufferAttribute(this.vertexColors, 4);
-    // var colorAttribute = new THREE.Uint8BufferAttribute(this.vertexColors, 4);
-    // colorAttribute.normalized = true; // this will map the buffer values to 0.0f - +1.0f in the shader
 
     this.geometry.setAttribute('position', positionAttribute);
     // this.geometry.setAttribute('normal', normalAttribute);
@@ -174,30 +163,30 @@ class SmoothLine {
           }
 
           // flat face normals
-          if(this.calculateNormals) {
-            for(let c = 0; c < 6 * 9; c += 9) {
-              var pA = new THREE.Vector3(this.positions[index + c + 0], this.positions[index + c + 1], this.positions[index + c + 2]);
-              var pB = new THREE.Vector3(this.positions[index + c + 3], this.positions[index + c + 4], this.positions[index + c + 5]);
-              var pC = new THREE.Vector3(this.positions[index + c + 6], this.positions[index + c + 7], this.positions[index + c + 8]);
-              var cb = new THREE.Vector3().subVectors(pC, pB);
-              var ab = new THREE.Vector3().subVectors(pA, pB);
-              cb.cross(ab);
-              cb.normalize();
-              updatePosition(this.normals, index + c, cb);
-              if(this._smooth) {
-                updatePosition(this.normals, index + c + 3, cb);
-                updatePosition(this.normals, index + c + 6, cb);
-              }
-            }
-          } else {
-            for(let c = 0; c < 6 * 9; c += 9) {
-              updatePosition(this.normals, index + c, this.upVector);
-              if(this._smooth) {
-                updatePosition(this.normals, index + c + 3, this.upVector);
-                updatePosition(this.normals, index + c + 6, this.upVector);
-              }
-            }
-          }
+          // if(this.calculateNormals) {
+          //   for(let c = 0; c < 6 * 9; c += 9) {
+          //     var pA = new THREE.Vector3(this.positions[index + c + 0], this.positions[index + c + 1], this.positions[index + c + 2]);
+          //     var pB = new THREE.Vector3(this.positions[index + c + 3], this.positions[index + c + 4], this.positions[index + c + 5]);
+          //     var pC = new THREE.Vector3(this.positions[index + c + 6], this.positions[index + c + 7], this.positions[index + c + 8]);
+          //     var cb = new THREE.Vector3().subVectors(pC, pB);
+          //     var ab = new THREE.Vector3().subVectors(pA, pB);
+          //     cb.cross(ab);
+          //     cb.normalize();
+          //     updatePosition(this.normals, index + c, cb);
+          //     if(this._smooth) {
+          //       updatePosition(this.normals, index + c + 3, cb);
+          //       updatePosition(this.normals, index + c + 6, cb);
+          //     }
+          //   }
+          // } else {
+          //   for(let c = 0; c < 6 * 9; c += 9) {
+          //     updatePosition(this.normals, index + c, this.upVector);
+          //     if(this._smooth) {
+          //       updatePosition(this.normals, index + c + 3, this.upVector);
+          //       updatePosition(this.normals, index + c + 6, this.upVector);
+          //     }
+          //   }
+          // }
 
         }
 
