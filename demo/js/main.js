@@ -227,6 +227,7 @@ function createLines() {
     fragmentShader: document.getElementById( 'fragmentShader' ).textContent,
     side: THREE.DoubleSide,
     transparent: true,
+    depthTest: false,
   });
 
 	for( var i = 0; i < params.amount; i++ ) {
