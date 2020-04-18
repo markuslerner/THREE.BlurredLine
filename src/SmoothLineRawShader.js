@@ -104,6 +104,7 @@ class SmoothLine {
     // this.geometry.setAttribute('normal', normalAttribute);
     this.geometry.setAttribute('color', colorAttribute);
     this.geometry.computeBoundingSphere();
+
   }
 
   updateGeometry(filled = false) {
@@ -200,6 +201,12 @@ class SmoothLine {
 
         }
 
+      }
+
+
+      for(let i = 0; i < this.lineShapeVertices.length - 1; i++) {
+        var index = i * 3 * 4 * (this._smooth ? 6 : 2);
+
         if(this.useContantColor || this.colors.length <= this._resolution) {
           var c = colorWithOpacity;
 
@@ -273,6 +280,7 @@ class SmoothLine {
         }
 
       }
+
 
       this.geometry.attributes.position.needsUpdate = true;
       // this.geometry.attributes.normal.needsUpdate = true;

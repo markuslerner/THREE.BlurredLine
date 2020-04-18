@@ -3,6 +3,18 @@ var container, stats;
 var camera, clock, scene, renderer;
 var curve, endPoint, handlesGeometry, lines = [], lineMaterial, params, wireframeMaterial;
 
+var Params = function() {
+  this.amount = 1;
+  this.resolution = 1;
+  this.angleBisection = false;
+  this.strokeWidth = 2;
+  this.smoothWidth = 10;
+  this.smooth = true;
+  this.opacity = 1.0;
+  this.wireframe = false;
+  this.autoRotate = false;
+};
+
 init();
 animate();
 
@@ -59,18 +71,6 @@ function init() {
   });
   var handles = new THREE.Line(handlesGeometry, handlesMaterial, THREE.LineSegments);
   scene.add(handles);
-
-  var Params = function() {
-  	this.amount = 1;
-    this.resolution = 50;
-    this.angleBisection = false;
-  	this.strokeWidth = 2;
-    this.smoothWidth = 10;
-    this.smooth = true;
-  	this.opacity = 1.0;
-    this.wireframe = false;
-  	this.autoRotate = false;
-  };
 
   params = new Params();
   var gui = new dat.GUI();
