@@ -29,10 +29,10 @@ class SmoothLine {
 
     this.lineShapeVertices = [[]];
 
-    this.calculateNormals = true;
+    // this.calculateNormals = true;
 
     this.color = new THREE.Color();
-    this.fadeColor = new THREE.Color(0x000000);
+    // this.fadeColor = new THREE.Color(0x000000);
 
     this.opacity = 1.0;
 
@@ -82,13 +82,18 @@ class SmoothLine {
     var trianglesCount = (this.lineShapeVertices.length - 1) * (this._smooth ? 6 : 2);
     this.geometry = new THREE.BufferGeometry();
     this.positions = new Float32Array(trianglesCount * 3 * 3);
-    this.normals = new Float32Array(trianglesCount * 3 * 3);
-    this.vertexColors = new Float32Array(trianglesCount * 3 * 3);
+    // this.normals = new Float32Array(trianglesCount * 3 * 3);
+    this.vertexColors = new Float32Array(trianglesCount * 3 * 4);
 
-    this.geometry.setAttribute('position', new THREE.BufferAttribute(this.positions, 3));
-    this.geometry.setAttribute('normal', new THREE.BufferAttribute(this.normals, 3));
-    this.geometry.setAttribute('color', new THREE.BufferAttribute(this.vertexColors, 3));
+    var positionAttribute = new THREE.BufferAttribute(this.positions, 3);
+    // var normalAttribute = new THREE.BufferAttribute(this.normals, 3);
+    var colorAttribute = new THREE.BufferAttribute(this.vertexColors, 4);
+
+    this.geometry.setAttribute('position', positionAttribute);
+    // this.geometry.setAttribute('normal', normalAttribute);
+    this.geometry.setAttribute('color', colorAttribute);
     this.geometry.computeBoundingSphere();
+
   }
 
   updateGeometry(filled = false) {
@@ -106,10 +111,11 @@ class SmoothLine {
 
       var lineShapeVertices = this.lineShapeVertices;
 
-      var colorWithOpacity = this.color.clone();
-      if(this.opacity < 1.0) {
-        colorWithOpacity.lerp(this.fadeColor, 1.0 - this.opacity);
-      }
+      var colorWithOpacity = this.color;
+      // var colorWithOpacity = this.color.clone();
+      // if(this.opacity < 1.0) {
+      //   colorWithOpacity.lerp(this.fadeColor, 1.0 - this.opacity);
+      // }
 
       for(let i = 0; i < this.lineShapeVertices.length - 1; i++) {
         var index = i * 3 * 3 * (this._smooth ? 6 : 2);
@@ -157,109 +163,116 @@ class SmoothLine {
           }
 
           // flat face normals
-          if(this.calculateNormals) {
-            for(let c = 0; c < 6 * 9; c += 9) {
-              var pA = new THREE.Vector3(this.positions[index + c + 0], this.positions[index + c + 1], this.positions[index + c + 2]);
-              var pB = new THREE.Vector3(this.positions[index + c + 3], this.positions[index + c + 4], this.positions[index + c + 5]);
-              var pC = new THREE.Vector3(this.positions[index + c + 6], this.positions[index + c + 7], this.positions[index + c + 8]);
-              var cb = new THREE.Vector3().subVectors(pC, pB);
-              var ab = new THREE.Vector3().subVectors(pA, pB);
-              cb.cross(ab);
-              cb.normalize();
-              updatePosition(this.normals, index + c, cb);
-              if(this._smooth) {
-                updatePosition(this.normals, index + c + 3, cb);
-                updatePosition(this.normals, index + c + 6, cb);
-              }
-            }
-          } else {
-            for(let c = 0; c < 6 * 9; c += 9) {
-              updatePosition(this.normals, index + c, this.upVector);
-              if(this._smooth) {
-                updatePosition(this.normals, index + c + 3, this.upVector);
-                updatePosition(this.normals, index + c + 6, this.upVector);
-              }
-            }
-          }
+          // if(this.calculateNormals) {
+          //   for(let c = 0; c < 6 * 9; c += 9) {
+          //     var pA = new THREE.Vector3(this.positions[index + c + 0], this.positions[index + c + 1], this.positions[index + c + 2]);
+          //     var pB = new THREE.Vector3(this.positions[index + c + 3], this.positions[index + c + 4], this.positions[index + c + 5]);
+          //     var pC = new THREE.Vector3(this.positions[index + c + 6], this.positions[index + c + 7], this.positions[index + c + 8]);
+          //     var cb = new THREE.Vector3().subVectors(pC, pB);
+          //     var ab = new THREE.Vector3().subVectors(pA, pB);
+          //     cb.cross(ab);
+          //     cb.normalize();
+          //     updatePosition(this.normals, index + c, cb);
+          //     if(this._smooth) {
+          //       updatePosition(this.normals, index + c + 3, cb);
+          //       updatePosition(this.normals, index + c + 6, cb);
+          //     }
+          //   }
+          // } else {
+          //   for(let c = 0; c < 6 * 9; c += 9) {
+          //     updatePosition(this.normals, index + c, this.upVector);
+          //     if(this._smooth) {
+          //       updatePosition(this.normals, index + c + 3, this.upVector);
+          //       updatePosition(this.normals, index + c + 6, this.upVector);
+          //     }
+          //   }
+          // }
 
         }
+
+      }
+
+
+      for(let i = 0; i < this.lineShapeVertices.length - 1; i++) {
+        var index = i * 3 * 4 * (this._smooth ? 6 : 2);
 
         if(this.useContantColor || this.colors.length <= this._resolution) {
           var c = colorWithOpacity;
 
           // stroke
           updateColor(this.vertexColors, index, c);
-          updateColor(this.vertexColors, index + 3, c);
-          updateColor(this.vertexColors, index + 6, c);
+          updateColor(this.vertexColors, index + 4, c);
+          updateColor(this.vertexColors, index + 8, c);
 
-          updateColor(this.vertexColors, index + 9, c);
           updateColor(this.vertexColors, index + 12, c);
-          updateColor(this.vertexColors, index + 15, c);
+          updateColor(this.vertexColors, index + 16, c);
+          updateColor(this.vertexColors, index + 20, c);
 
           if(this._smooth) {
             // left smooth
-            updateColor(this.vertexColors, index + 18, c);
-            updateColor(this.vertexColors, index + 21, this.fadeColor);
-            updateColor(this.vertexColors, index + 24, this.fadeColor);
+            updateColor(this.vertexColors, index + 24, c);
+            updateColor(this.vertexColors, index + 28, c, 0);
+            updateColor(this.vertexColors, index + 32, c, 0);
 
-            updateColor(this.vertexColors, index + 27, c);
-            updateColor(this.vertexColors, index + 30, this.fadeColor);
-            updateColor(this.vertexColors, index + 33, c);
+            updateColor(this.vertexColors, index + 36, c);
+            updateColor(this.vertexColors, index + 40, c, 0);
+            updateColor(this.vertexColors, index + 44, c);
 
             // right smooth
-            updateColor(this.vertexColors, index + 36, c);
-            updateColor(this.vertexColors, index + 39, c);
-            updateColor(this.vertexColors, index + 42, this.fadeColor);
-
-            updateColor(this.vertexColors, index + 45, this.fadeColor);
             updateColor(this.vertexColors, index + 48, c);
-            updateColor(this.vertexColors, index + 51, this.fadeColor);
+            updateColor(this.vertexColors, index + 52, c);
+            updateColor(this.vertexColors, index + 56, c, 0);
+
+            updateColor(this.vertexColors, index + 60, c, 0);
+            updateColor(this.vertexColors, index + 64, c);
+            updateColor(this.vertexColors, index + 68, c, 0);
           }
 
         } else {
           var c = this.colors[i].clone();
-          if(this.opacity < 1.0) {
-            c.lerp(this.fadeColor, 1.0 - this.opacity);
-          }
+          // if(this.opacity < 1.0) {
+          //   c.lerp(this.fadeColor, 1.0 - this.opacity);
+          // }
           var c2 = this.colors[i + 1].clone();
-          if(this.opacity < 1.0) {
-            c2.lerp(this.fadeColor, 1.0 - this.opacity);
-          }
+          // if(this.opacity < 1.0) {
+          //   c2.lerp(this.fadeColor, 1.0 - this.opacity);
+          // }
 
           // stroke
           updateColor(this.vertexColors, index, c);
-          updateColor(this.vertexColors, index + 3, c2);
-          updateColor(this.vertexColors, index + 6, c);
+          updateColor(this.vertexColors, index + 4, c2);
+          updateColor(this.vertexColors, index + 8, c);
 
-          updateColor(this.vertexColors, index + 9, c);
-          updateColor(this.vertexColors, index + 12, c2);
-          updateColor(this.vertexColors, index + 15, c2);
+          updateColor(this.vertexColors, index + 12, c);
+          updateColor(this.vertexColors, index + 16, c2);
+          updateColor(this.vertexColors, index + 20, c2);
 
           if(this._smooth) {
             // left smooth
-            updateColor(this.vertexColors, index + 18, c);
-            updateColor(this.vertexColors, index + 21, this.fadeColor);
-            updateColor(this.vertexColors, index + 24, this.fadeColor);
+            updateColor(this.vertexColors, index + 24, c);
+            updateColor(this.vertexColors, index + 28, c, 0);
+            updateColor(this.vertexColors, index + 32, c, 0);
 
-            updateColor(this.vertexColors, index + 27, c);
-            updateColor(this.vertexColors, index + 30, this.fadeColor);
-            updateColor(this.vertexColors, index + 33, c2);
+            updateColor(this.vertexColors, index + 36, c);
+            updateColor(this.vertexColors, index + 40, c, 0);
+            updateColor(this.vertexColors, index + 44, c2);
 
             // right smooth
-            updateColor(this.vertexColors, index + 36, c);
-            updateColor(this.vertexColors, index + 39, c2);
-            updateColor(this.vertexColors, index + 42, this.fadeColor);
+            updateColor(this.vertexColors, index + 48, c);
+            updateColor(this.vertexColors, index + 52, c2);
+            updateColor(this.vertexColors, index + 56, c, 0);
 
-            updateColor(this.vertexColors, index + 45, this.fadeColor);
-            updateColor(this.vertexColors, index + 48, c2);
-            updateColor(this.vertexColors, index + 51, this.fadeColor);
+            updateColor(this.vertexColors, index + 60, c, 0);
+            updateColor(this.vertexColors, index + 64, c2);
+            updateColor(this.vertexColors, index + 68, c, 0);
           }
         }
 
       }
 
+
       this.geometry.attributes.position.needsUpdate = true;
-      this.geometry.attributes.normal.needsUpdate = true;
+      // this.geometry.attributes.normal.needsUpdate = true;
       this.geometry.attributes.color.needsUpdate = true;
 
       // this.geometry.computeBoundingSphere();
@@ -530,8 +543,9 @@ function updatePosition(positions, index, point) {
   positions[index + 2] = point.z;
 }
 
-function updateColor(colors, index, color) {
+function updateColor(colors, index, color, alpha = 1) {
   colors[index] = color.r;
   colors[index + 1] = color.g;
   colors[index + 2] = color.b;
+  colors[index + 3] = alpha;
 }
