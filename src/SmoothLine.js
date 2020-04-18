@@ -1,3 +1,16 @@
+;(function() {
+
+"use strict";
+
+var root = this
+
+var has_require = typeof require !== 'undefined'
+
+var THREE = root.THREE || has_require && require('three')
+if( !THREE )
+	throw new Error( 'SmoothLine requires three.js' )
+
+
 var LEFT_LINE = 0;
 var RIGHT_LINE = 1;
 var LEFT_SMOOTH_LINE = 2;
@@ -537,3 +550,16 @@ function updateColor(colors, index, color, alpha = 1) {
   colors[index + 2] = color.b;
   colors[index + 3] = alpha;
 }
+
+
+if( typeof exports !== 'undefined' ) {
+	if( typeof module !== 'undefined' && module.exports ) {
+		exports = module.exports = { SmoothLine: SmoothLine };
+	}
+	exports.SmoothLine = SmoothLine;
+
+} else {
+	root.SmoothLine = SmoothLine;
+}
+
+}).call(this);
