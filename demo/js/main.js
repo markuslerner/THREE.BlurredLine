@@ -92,13 +92,13 @@ function init() {
   			l.updateGeometry();
   		} );
   	} );
-  	gui.add( params, 'strokeWidth', 1, 250 ).onChange(function() {
+  	gui.add( params, 'strokeWidth', 0.1, 250 ).onChange(function() {
   		lines.forEach( function( l ) {
   			l.strokeWidth = params.strokeWidth;
   			l.updateGeometry();
   		} );
   	} );
-    gui.add( params, 'smoothWidth', 1, 250 ).onChange(function() {
+    gui.add( params, 'smoothWidth', 0, 250 ).onChange(function() {
   		lines.forEach( function( l ) {
   			l.smoothWidth = params.smoothWidth;
   			l.updateGeometry();
