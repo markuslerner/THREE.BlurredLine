@@ -106,10 +106,7 @@ function init() {
   	} );
     gui.add( params, 'smooth' ).onChange( update );
   	gui.add( params, 'opacity', 0.0, 1.0 ).onChange(function() {
-      lineMaterial.opacity = params.opacity;
-  		lines.forEach( function( l ) {
-  			l.updateGeometry();
-  		} );
+      lineMaterial.uniforms.opacity.value = params.opacity;
   	} );
     gui.add( params, 'wireframe' ).onChange( update );
     gui.add( params, 'autoRotate' );
@@ -192,7 +189,7 @@ function onDocumentMouseMove(event) {
 function createLine(i) {
 	const line = new SmoothLine(parseInt(params.resolution), params.smooth);
 	line.angleBisection = params.angleBisection;
-	line.color = new THREE.Color(0xFF0000);
+	line.color = new THREE.Color(0x000000);
 	line.fadeColor = new THREE.Color(0xFFFFFF);
 	line.strokeWidth = params.strokeWidth; // 2f
 	line.smoothWidth = params.smoothWidth; // 3f
@@ -221,7 +218,8 @@ function createLines() {
 
   lineMaterial = new THREE.RawShaderMaterial({
     uniforms: {
-      time: { value: 1.0 }
+      // time: { value: 1.0 },
+      opacity: { value: params.opacity },
     },
     vertexShader: document.getElementById( 'vertexShader' ).textContent,
     fragmentShader: document.getElementById( 'fragmentShader' ).textContent,

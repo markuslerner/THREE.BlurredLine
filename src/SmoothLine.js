@@ -111,12 +111,6 @@ class SmoothLine {
 
       var lineShapeVertices = this.lineShapeVertices;
 
-      var colorWithOpacity = this.color;
-      // var colorWithOpacity = this.color.clone();
-      // if(this.opacity < 1.0) {
-      //   colorWithOpacity.lerp(this.fadeColor, 1.0 - this.opacity);
-      // }
-
       for(let i = 0; i < this.lineShapeVertices.length - 1; i++) {
         var index = i * 3 * 3 * (this._smooth ? 6 : 2);
 
@@ -197,7 +191,7 @@ class SmoothLine {
         var index = i * 3 * 4 * (this._smooth ? 6 : 2);
 
         if(this.useContantColor || this.colors.length <= this._resolution) {
-          var c = colorWithOpacity;
+          var c = this.color;
 
           // stroke
           updateColor(this.vertexColors, index, c);
@@ -229,14 +223,8 @@ class SmoothLine {
           }
 
         } else {
-          var c = this.colors[i].clone();
-          // if(this.opacity < 1.0) {
-          //   c.lerp(this.fadeColor, 1.0 - this.opacity);
-          // }
-          var c2 = this.colors[i + 1].clone();
-          // if(this.opacity < 1.0) {
-          //   c2.lerp(this.fadeColor, 1.0 - this.opacity);
-          // }
+          var c = this.colors[i];
+          var c2 = this.colors[i + 1];
 
           // stroke
           updateColor(this.vertexColors, index, c);
