@@ -556,14 +556,129 @@
   }
 
 
+  class BlurredLineMaterial extends THREE.RawShaderMaterial {
+    constructor(parameters) {
+      super(parameters);
+
+      if(!parameters) {
+        parameters = {
+          depthTest: false,
+          transparent: true,
+        };
+      } else {
+        if(parameters.depthTest === undefined) parameters.depthTest = false;
+        if(parameters.transparent === undefined) parameters.transparent = true;
+      }
+
+      this.uniforms = {
+        // time: { value: 1.0 },
+        opacity: { value: 1.0 },
+      };
+
+      this.vertexShader = `
+        precision mediump float;
+        precision mediump int;
+
+        uniform mat4 modelViewMatrix; // optional
+        uniform mat4 projectionMatrix; // optional
+
+        attribute vec3 position;
+        attribute vec4 color;
+
+        // varying vec3 vPosition;
+        varying vec4 vColor;
+
+        void main()	{
+
+          // vPosition = position;
+          vColor = color;
+
+          gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+
+        }
+      `;
+
+      this.fragmentShader = `
+        precision mediump float;
+        precision mediump int;
+
+        uniform float time;
+        uniform float opacity;
+
+        // varying vec3 vPosition;
+        varying vec4 vColor;
+
+        void main()	{
+
+          vec4 color = vec4( vColor );
+          color.a *= opacity;
+          // color.r += sin( vPosition.x * 10.0 + time ) * 0.5;
+
+          gl_FragColor = color;
+
+        }
+      `;
+
+      this.type = 'BlurredLineMaterial';
+
+      Object.defineProperties( this, {
+    		// lineWidth: {
+    		// 	enumerable: true,
+    		// 	get: function () {
+    		// 		return this.uniforms.lineWidth.value;
+    		// 	},
+    		// 	set: function ( value ) {
+    		// 		this.uniforms.lineWidth.value = value;
+    		// 	}
+    		// },
+    		// color: {
+    		// 	enumerable: true,
+    		// 	get: function () {
+    		// 		return this.uniforms.color.value;
+    		// 	},
+    		// 	set: function ( value ) {
+    		// 		this.uniforms.color.value = value;
+    		// 	}
+    		// },
+    		opacity: {
+    			enumerable: true,
+    			get: function() {
+    				return this.uniforms.opacity.value;
+    			},
+    			set: function(value) {
+    				this.uniforms.opacity.value = value;
+    			}
+    		},
+    	});
+
+    	this.setValues(parameters);
+
+    }
+
+    copy(source) {
+
+      THREE.ShaderMaterial.prototype.copy.call( this, source );
+
+      // this.lineWidth = source.lineWidth;
+      // this.color.copy( source.color );
+      this.opacity = source.opacity;
+
+      return this;
+
+    }
+
+  }
+
   if( typeof exports !== 'undefined' ) {
   	if( typeof module !== 'undefined' && module.exports ) {
-  		exports = module.exports = { BlurredLine: BlurredLine };
+  		exports = module.exports = { BlurredLine: BlurredLine, BlurredLineMaterial: BlurredLineMaterial };
   	}
   	exports.BlurredLine = BlurredLine;
+    exports.BlurredLineMaterial = BlurredLineMaterial;
 
   } else {
   	root.BlurredLine = BlurredLine;
+    root.BlurredLineMaterial = BlurredLineMaterial;
   }
 
 }).call(this);
