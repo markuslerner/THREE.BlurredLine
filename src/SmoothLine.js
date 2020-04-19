@@ -18,7 +18,7 @@ var RIGHT_SMOOTH_LINE = 3;
 
 class SmoothLine {
 
-  constructor(resolution = 1, smooth = true) {
+  constructor(curve, resolution = 1, smooth = true) {
     this._resolution = resolution;
     this._smooth = smooth;
 
@@ -45,7 +45,7 @@ class SmoothLine {
     this.color = new THREE.Color();
 
     this.lineVertices = [];
-    this.curve = null; // curve to read vertices from
+    this.curve = curve; // curve to read vertices from
 
     for(let i = 0; i < this._resolution + 1; i++) {
       this.lineVertices[i] = new THREE.Vector3();

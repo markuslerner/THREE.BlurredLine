@@ -198,13 +198,12 @@ function onDocumentMouseMove(event) {
 }
 
 function createLine(i) {
-	const line = new SmoothLine(parseInt(params.resolution), params.smooth);
+	const line = new SmoothLine(curve, parseInt(params.resolution), params.smooth);
 	line.angleBisection = params.angleBisection;
 	line.color = new THREE.Color(params.color);
 	line.strokeWidth = params.strokeWidth; // 2f
 	line.smoothWidth = params.smoothWidth; // 3f
 	line.upVector = new THREE.Vector3(0.0, 0.0, 1.0);
-	line.curve = curve;
 	line.updateGeometry();
 
 	lines.push( line );
@@ -216,16 +215,6 @@ function createLine(i) {
 }
 
 function createLines() {
-  // lineMaterial = new THREE.MeshBasicMaterial({
-  // 	color: 0xFFFFFF,
-  //   opacity: params.opacity,
-  // 	side: THREE.DoubleSide,
-  // 	vertexColors: THREE.VertexColors,
-  // 	blending: THREE.NormalBlending, // THREE.SubtractiveBlending, // THREE.AdditiveBlending
-  // 	transparent: true,
-  // 	// depthTest: false,
-  // });
-
   lineMaterial = new THREE.RawShaderMaterial({
     uniforms: {
       // time: { value: 1.0 },
