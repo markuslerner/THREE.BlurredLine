@@ -16,9 +16,11 @@
 
   class BlurredLine {
 
-    constructor(curve, resolution = 1, smooth = true) {
+    constructor(curve, material, resolution = 1, smooth = true) {
       this._resolution = resolution;
       this._smooth = smooth;
+
+      this.material = material;
 
       this.lineWidth = 1.0;
       this.smoothWidth = 1.0;
@@ -81,6 +83,8 @@
       }
 
       this.createGeometry();
+
+      this.mesh = new THREE.Mesh(this.geometry, this.material);
 
     }
 

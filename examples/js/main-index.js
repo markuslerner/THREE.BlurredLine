@@ -143,9 +143,6 @@ function init() {
     gui.add(params, 'autoRotate');
   } );
 
-  // var mesh = new THREE.Mesh( geometry, material );
-  // scene.add( mesh );
-
   renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   renderer.setPixelRatio( window.devicePixelRatio );
   renderer.setSize( window.innerWidth, window.innerHeight );
@@ -218,7 +215,7 @@ function onDocumentMouseMove(event) {
 }
 
 function createLine(i) {
-  const line = new BlurredLine(curve, parseInt(params.resolution), params.smooth);
+  const line = new BlurredLine(curve, lineMaterial, parseInt(params.resolution), params.smooth);
   line.angleBisection = params.angleBisection;
   line.color = new THREE.Color(params.color);
   line.lineWidth = params.lineWidth; // 2f
@@ -226,12 +223,9 @@ function createLine(i) {
   line.upVector = new THREE.Vector3(0.0, 0.0, 1.0);
   line.closed = params.closed;
   line.updateGeometry();
-
-  lines.push( line );
-
-  line.mesh = new THREE.Mesh(line.geometry, params.wireframe ? wireframeMaterial : lineMaterial);
-  line.mesh.position.x += i * 10;
   scene.add(line.mesh);
+  line.mesh.position.x += i * 10;
+  lines.push( line );
 
 }
 
