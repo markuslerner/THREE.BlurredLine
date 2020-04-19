@@ -1,4 +1,4 @@
-# SmoothLine
+# THREE.BlurredLine
 
 TODO
 
