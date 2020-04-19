@@ -7,6 +7,7 @@ var Params = function() {
   this.amount = 1;
   this.resolution = 50;
   this.angleBisection = false;
+  this.closed = false;
   this.color = '#000000';
   this.strokeWidth = 2;
   this.smoothWidth = 10;
@@ -34,6 +35,11 @@ function init() {
 
   endPoint = new THREE.Vector3(0, 0, 0);
 
+  // curve = new THREE.LineCurve3(
+  //   new THREE.Vector3(-500, 0, -500),
+  //   endPoint
+  // );
+
   curve = new THREE.CubicBezierCurve3(
     new THREE.Vector3(-500, 0, -500),
     new THREE.Vector3(0, 0, 500),
@@ -41,10 +47,23 @@ function init() {
     endPoint,
   );
 
+  // curve = new THREE.Path();
+  // curve.lineTo( 0, 0 );
+  // curve.quadraticCurveTo( -500, 0, 0, 200 );
+  // curve.lineTo( 0, 500 );
+
   // var curve = new THREE.QuadraticBezierCurve3(
   // 	new THREE.Vector3( -100, 0, 0 ),
   // 	new THREE.Vector3( 200, 150, 0 ),
   // 	new THREE.Vector3( 100, 0, 0 )
+  // );
+
+  // curve = new THREE.EllipseCurve(
+  // 	0,  0,            // ax, aY
+  // 	200, 200,           // xRadius, yRadius
+  // 	0,  2 * Math.PI,  // aStartAngle, aEndAngle
+  // 	false,            // aClockwise
+  // 	0                 // aRotation
   // );
 
   // outline:
@@ -93,6 +112,7 @@ function init() {
   			l.updateGeometry();
   		} );
   	} );
+    gui.add(params, 'closed').onChange( update );
     gui.addColor(params, 'color').onChange(function() {
       var color = new THREE.Color( params.color );
       // var hex = color.getHexString();
@@ -204,6 +224,7 @@ function createLine(i) {
 	line.strokeWidth = params.strokeWidth; // 2f
 	line.smoothWidth = params.smoothWidth; // 3f
 	line.upVector = new THREE.Vector3(0.0, 0.0, 1.0);
+  line.closed = params.closed;
 	line.updateGeometry();
 
 	lines.push( line );

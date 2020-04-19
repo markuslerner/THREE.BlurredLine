@@ -108,6 +108,13 @@ class SmoothLine {
     if(this.curve !== null) {
       // console.log( this.curve.getPoints(this._resolution) );
       this.lineVertices = this.curve.getPoints(this._resolution);
+			if( this.lineVertices.length > 0 && this.lineVertices[0] instanceof THREE.Vector2 ) {
+				for(let i = 0; i < this.lineShapeVertices.length; i++) {
+					var v = this.lineVertices[i];
+					this.lineVertices[i] = new THREE.Vector3(v.x, v.y, 0.0);
+				}
+			}
+
     }
 
     if(!this.useContantColor && this.colors.length <= this._resolution) {
@@ -313,7 +320,7 @@ class SmoothLine {
         vectorPrevious.sub(lineVertices[i]);
         distancePrevious = vectorPrevious.length();
       } else {
-        if(closed) {
+        if(this.closed) {
           vectorPrevious.copy(lineVertices[lineVertices.length - 1]);
           vectorPrevious.sub(lineVertices[i]);
           distancePrevious = vectorPrevious.length();
@@ -343,7 +350,7 @@ class SmoothLine {
           if(distanceCurrent === 0) {
             vectorCurrent.set(1, 0, 0);
           }
-          if(closed) {
+          if(this.closed) {
             vectorSide.copy(lineVertices[lineVertices.length - 1]);
             vectorSide.sub(lineVertices[0]);
           } else {
@@ -368,7 +375,7 @@ class SmoothLine {
         }
 
       } else {
-        this.calculateSideVector(vectorSide, vectorCurrent, vectorSidePrevious);
+      	this.calculateSideVector(vectorSide, vectorCurrent, vectorSidePrevious);
 
       }
 
@@ -424,12 +431,7 @@ class SmoothLine {
     if(this.angleBisection) {
       // calcuate angle bisection (good for 2d):
 
-      if(closed) {
-        vectorSide.copy(lineVertices[lineVertices.length - 1]);
-        vectorSide.sub(lineVertices[0]);
-      } else {
-        vectorSide.copy(vectorCurrent);
-      }
+      vectorSide.copy(vectorCurrent);
       vectorSide.set(-vectorSide.y, vectorSide.x, vectorSide.z);
 
       vectorSidePrevious.copy(this.lineShapeVertices[this._resolution - 1][LEFT_LINE]);
@@ -473,6 +475,15 @@ class SmoothLine {
       this.lineShapeVertices[this._resolution][LEFT_SMOOTH_LINE].add(vectorSideCopy);
       this.lineShapeVertices[this._resolution][RIGHT_SMOOTH_LINE].sub(vectorSideCopy);
     }
+
+		if(this.closed) {
+			// this.lineShapeVertices[this._resolution] = this.lineShapeVertices[0];
+
+			this.lineShapeVertices[this._resolution][LEFT_LINE].copy(this.lineShapeVertices[0][LEFT_LINE]);
+			this.lineShapeVertices[this._resolution][RIGHT_LINE].copy(this.lineShapeVertices[0][RIGHT_LINE]);
+			this.lineShapeVertices[this._resolution][LEFT_SMOOTH_LINE].copy(this.lineShapeVertices[0][LEFT_SMOOTH_LINE]);
+			this.lineShapeVertices[this._resolution][RIGHT_SMOOTH_LINE].copy(this.lineShapeVertices[0][RIGHT_SMOOTH_LINE]);
+		}
 
   }
 
