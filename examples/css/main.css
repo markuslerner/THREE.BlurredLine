@@ -27,7 +27,11 @@ body {
   background-color: #fff;
   background-image: linear-gradient(#ccc 1px, transparent 1px),linear-gradient(90deg, #ccc 1px, transparent 1px),linear-gradient(rgba(0,0,0,.1) 1px, transparent 1px),linear-gradient(90deg, rgba(0,0,0,.1) 1px, transparent 1px);
   background-size: 100px 100px, 100px 100px, 10px 10px, 10px 10px;
-  background-position: calc(50vw - 2px) calc(50vh - 2px), calc(50vw - 2px) calc(50vh - 2px), calc(50vw - 2px) calc(50vh - 2px), calc(50vw - 2px) calc(50vh - 2px);
+  background-position:
+    calc(50vw - 0px) calc(50vh - 1px),
+    calc(50vw - 0px) calc(50vh - 1px),
+    calc(50vw - 0px) calc(50vh - 1px),
+    calc(50vw - 0px) calc(50vh - 1px);
 }
 
 h1 {

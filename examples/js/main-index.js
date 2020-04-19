@@ -166,11 +166,11 @@ function init() {
 function onWindowResize() {
 
   camera.left   = window.innerWidth / - 2;
-	camera.right  =  window.innerWidth / 2;
-	camera.top    = window.innerHeight / 2;
-	camera.bottom = window.innerHeight / - 2;
+  camera.right  =  window.innerWidth / 2;
+  camera.top    = window.innerHeight / 2;
+  camera.bottom = window.innerHeight / - 2;
 
-	camera.updateProjectionMatrix();
+  camera.updateProjectionMatrix();
 
   renderer.setSize( window.innerWidth, window.innerHeight );
 
@@ -211,27 +211,27 @@ function onDocumentMouseMove(event) {
 
   handlesGeometry.verticesNeedUpdate = true;
 
-  lines.forEach( function( l ) {
-		l.updateGeometry();
-	} );
+  lines.forEach(function(l) {
+    l.updateGeometry();
+  });
 
 }
 
 function createLine(i) {
-	const line = new SmoothLine(curve, parseInt(params.resolution), params.smooth);
-	line.angleBisection = params.angleBisection;
-	line.color = new THREE.Color(params.color);
-	line.strokeWidth = params.strokeWidth; // 2f
-	line.smoothWidth = params.smoothWidth; // 3f
-	line.upVector = new THREE.Vector3(0.0, 0.0, 1.0);
+  const line = new BlurredLine(curve, parseInt(params.resolution), params.smooth);
+  line.angleBisection = params.angleBisection;
+  line.color = new THREE.Color(params.color);
+  line.strokeWidth = params.strokeWidth; // 2f
+  line.smoothWidth = params.smoothWidth; // 3f
+  line.upVector = new THREE.Vector3(0.0, 0.0, 1.0);
   line.closed = params.closed;
-	line.updateGeometry();
+  line.updateGeometry();
 
-	lines.push( line );
+  lines.push( line );
 
-	line.mesh = new THREE.Mesh(line.geometry, params.wireframe ? wireframeMaterial : lineMaterial);
+  line.mesh = new THREE.Mesh(line.geometry, params.wireframe ? wireframeMaterial : lineMaterial);
   line.mesh.position.x += i * 10;
-	scene.add(line.mesh);
+  scene.add(line.mesh);
 
 }
 
@@ -288,16 +288,16 @@ function createLines() {
     depthTest: false,
   });
 
-	for( var i = 0; i < params.amount; i++ ) {
-		createLine(i);
-	}
+  for(var i = 0; i < params.amount; i++) {
+  	createLine(i);
+  }
 }
 
 function clearLines() {
 
-	lines.forEach( function( l ) {
-		scene.remove( l.mesh );
-	} );
-	lines = [];
+  lines.forEach(function(l) {
+  	scene.remove(l.mesh);
+  });
+  lines = [];
 
 }
