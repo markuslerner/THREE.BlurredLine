@@ -7,6 +7,7 @@ var Params = function() {
   this.amount = 1;
   this.resolution = 50;
   this.angleBisection = false;
+  this.color = '#000000';
   this.strokeWidth = 2;
   this.smoothWidth = 10;
   this.smooth = true;
@@ -78,38 +79,48 @@ function init() {
   window.addEventListener( 'load', function() {
 
   	function update() {
-  		// if( params.autoUpdate ) {
+  		// if(params.autoUpdate ) {
   			clearLines();
   			createLines();
   		// }
   	}
 
-  	gui.add( params, 'amount', 1, 1000 ).onChange( update );
-    gui.add( params, 'resolution', 1, 100 ).onChange( update );
-    gui.add( params, 'angleBisection' ).onChange(function() {
+  	gui.add(params, 'amount', 1, 1000).onChange( update );
+    gui.add(params, 'resolution', 1, 100).onChange( update );
+    gui.add(params, 'angleBisection').onChange(function() {
   		lines.forEach( function( l ) {
   			l.angleBisection = params.angleBisection;
   			l.updateGeometry();
   		} );
   	} );
-  	gui.add( params, 'strokeWidth', 0.1, 250 ).onChange(function() {
+    gui.addColor(params, 'color').onChange(function() {
+      var color = new THREE.Color( params.color );
+      // var hex = color.getHexString();
+      // var css = color.getStyle();
+
+  		lines.forEach( function( l ) {
+  			l.color = color;
+  			l.updateGeometry();
+  		} );
+  	} );
+  	gui.add(params, 'strokeWidth', 0.1, 250).onChange(function() {
   		lines.forEach( function( l ) {
   			l.strokeWidth = params.strokeWidth;
   			l.updateGeometry();
   		} );
   	} );
-    gui.add( params, 'smoothWidth', 0, 250 ).onChange(function() {
+    gui.add(params, 'smoothWidth', 0, 250).onChange(function() {
   		lines.forEach( function( l ) {
   			l.smoothWidth = params.smoothWidth;
   			l.updateGeometry();
   		} );
   	} );
-    gui.add( params, 'smooth' ).onChange( update );
-  	gui.add( params, 'opacity', 0.0, 1.0 ).onChange(function() {
+    gui.add(params, 'smooth').onChange( update );
+  	gui.add(params, 'opacity', 0.0, 1.0).onChange(function() {
       lineMaterial.uniforms.opacity.value = params.opacity;
   	} );
-    gui.add( params, 'wireframe' ).onChange( update );
-    gui.add( params, 'autoRotate' );
+    gui.add(params, 'wireframe').onChange( update );
+    gui.add(params, 'autoRotate');
   } );
 
   // var mesh = new THREE.Mesh( geometry, material );
@@ -158,7 +169,7 @@ function render() {
 
   var delta = clock.getDelta();
   lines.forEach( function( l ) {
-    if( params.autoRotate ) {
+    if(params.autoRotate ) {
       l.mesh.rotation.y += 0.125 * delta;
     } else {
       l.mesh.rotation.y = 0;
@@ -189,8 +200,7 @@ function onDocumentMouseMove(event) {
 function createLine(i) {
 	const line = new SmoothLine(parseInt(params.resolution), params.smooth);
 	line.angleBisection = params.angleBisection;
-	line.color = new THREE.Color(0x000000);
-	line.fadeColor = new THREE.Color(0xFFFFFF);
+	line.color = new THREE.Color(params.color);
 	line.strokeWidth = params.strokeWidth; // 2f
 	line.smoothWidth = params.smoothWidth; // 3f
 	line.upVector = new THREE.Vector3(0.0, 0.0, 1.0);

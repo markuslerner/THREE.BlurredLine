@@ -22,8 +22,6 @@ class SmoothLine {
     this._resolution = resolution;
     this._smooth = smooth;
 
-    this.lineAtoms = [];
-
     this.strokeWidth = 1.0;
     this.smoothWidth = 1.0;
 
@@ -45,9 +43,6 @@ class SmoothLine {
     // this.calculateNormals = true;
 
     this.color = new THREE.Color();
-    // this.fadeColor = new THREE.Color(0x000000);
-
-    this.opacity = 1.0;
 
     this.lineVertices = [];
     this.curve = null; // curve to read vertices from
