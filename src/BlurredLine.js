@@ -20,10 +20,10 @@
       this._resolution = resolution;
       this._smooth = smooth;
 
-      this.strokeWidth = 1.0;
+      this.lineWidth = 1.0;
       this.smoothWidth = 1.0;
 
-      this.strokeWidths = [];
+      this.lineWidths = [];
       this.smoothWidths = [];
       this.colors = [];
 
@@ -32,7 +32,7 @@
       this.closed = false;
 
       this.useContantColor = true;
-      this.useContantStrokeWidth = true;
+      this.useContantLineWidth = true;
       this.useContantSmoothWidth = true;
       this.angleBisection = false; // true: good for 2d
 
@@ -56,10 +56,10 @@
         }
       }
 
-      if(this.strokeWidths === null) {
-        this.strokeWidths = [];
+      if(this.lineWidths === null) {
+        this.lineWidths = [];
         for(let i = 0; i < this._resolution + 1; i++) {
-          this.strokeWidths[i] = 1.0;
+          this.lineWidths[i] = 1.0;
         }
       }
 
@@ -140,7 +140,7 @@
           } else {
             // 6 triangles:
 
-            // stroke
+            // line
             updatePosition(this.positions, index, lineShapeVertices[i][LEFT_LINE]);
             updatePosition(this.positions, index + 3, lineShapeVertices[i + 1][LEFT_LINE]);
             updatePosition(this.positions, index + 6, lineShapeVertices[i][RIGHT_LINE]);
@@ -206,7 +206,7 @@
           if(this.useContantColor || this.colors.length <= this._resolution) {
             var c = this.color;
 
-            // stroke
+            // line
             updateColor(this.vertexColors, index, c);
             updateColor(this.vertexColors, index + 4, c);
             updateColor(this.vertexColors, index + 8, c);
@@ -239,7 +239,7 @@
             var c = this.colors[i];
             var c2 = this.colors[i + 1];
 
-            // stroke
+            // line
             updateColor(this.vertexColors, index, c);
             updateColor(this.vertexColors, index + 4, c2);
             updateColor(this.vertexColors, index + 8, c);
@@ -380,27 +380,27 @@
         vectorSide.normalize();
         vectorSideCopy.copy(vectorSide);
 
-        if(this.useContantStrokeWidth) {
-          vectorSide.multiplyScalar(this.strokeWidth / 2.0);
+        if(this.useContantLineWidth) {
+          vectorSide.multiplyScalar(this.lineWidth / 2.0);
         } else {
-          vectorSide.multiplyScalar(this.strokeWidths[i] / 2.0);
+          vectorSide.multiplyScalar(this.lineWidths[i] / 2.0);
         }
 
         this.lineShapeVertices[i][LEFT_LINE].add(vectorSide);
         this.lineShapeVertices[i][RIGHT_LINE].sub(vectorSide);
 
         if(this._smooth) {
-          if(this.useContantStrokeWidth) {
+          if(this.useContantLineWidth) {
             if(this.useContantSmoothWidth) {
-              vectorSideCopy.multiplyScalar((this.strokeWidth / 2.0 + this.smoothWidth));
+              vectorSideCopy.multiplyScalar((this.lineWidth / 2.0 + this.smoothWidth));
             } else {
-              vectorSideCopy.multiplyScalar((this.strokeWidth / 2.0 + this.smoothWidths[i]));
+              vectorSideCopy.multiplyScalar((this.lineWidth / 2.0 + this.smoothWidths[i]));
             }
           } else {
             if(this.useContantSmoothWidth) {
-              vectorSideCopy.multiplyScalar((this.strokeWidths[i] / 2.0 + this.smoothWidth));
+              vectorSideCopy.multiplyScalar((this.lineWidths[i] / 2.0 + this.smoothWidth));
             } else {
-              vectorSideCopy.multiplyScalar((this.strokeWidths[i] / 2.0 + this.smoothWidths[i]));
+              vectorSideCopy.multiplyScalar((this.lineWidths[i] / 2.0 + this.smoothWidths[i]));
             }
           }
 
@@ -446,27 +446,27 @@
       vectorSide.normalize();
       vectorSideCopy.copy(vectorSide);
 
-      if(this.useContantStrokeWidth) {
-        vectorSide.multiplyScalar(this.strokeWidth / 2.0);
+      if(this.useContantLineWidth) {
+        vectorSide.multiplyScalar(this.lineWidth / 2.0);
       } else {
-        vectorSide.multiplyScalar(this.strokeWidths[this._resolution] / 2.0);
+        vectorSide.multiplyScalar(this.lineWidths[this._resolution] / 2.0);
       }
 
       this.lineShapeVertices[this._resolution][LEFT_LINE].add(vectorSide);
       this.lineShapeVertices[this._resolution][RIGHT_LINE].sub(vectorSide);
 
       if(this._smooth) {
-        if(this.useContantStrokeWidth) {
+        if(this.useContantLineWidth) {
           if(this.useContantSmoothWidth) {
-            vectorSideCopy.multiplyScalar((this.strokeWidth / 2.0 + this.smoothWidth));
+            vectorSideCopy.multiplyScalar((this.lineWidth / 2.0 + this.smoothWidth));
           } else {
-            vectorSideCopy.multiplyScalar((this.strokeWidth / 2.0 + this.smoothWidths[this._resolution]));
+            vectorSideCopy.multiplyScalar((this.lineWidth / 2.0 + this.smoothWidths[this._resolution]));
           }
         } else {
           if(this.useContantSmoothWidth) {
-            vectorSideCopy.multiplyScalar((this.strokeWidths[this._resolution] / 2.0 + this.smoothWidth));
+            vectorSideCopy.multiplyScalar((this.lineWidths[this._resolution] / 2.0 + this.smoothWidth));
           } else {
-            vectorSideCopy.multiplyScalar((this.strokeWidths[this._resolution] / 2.0 + this.smoothWidths[this._resolution]));
+            vectorSideCopy.multiplyScalar((this.lineWidths[this._resolution] / 2.0 + this.smoothWidths[this._resolution]));
           }
         }
 

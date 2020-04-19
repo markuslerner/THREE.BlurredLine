@@ -62,7 +62,7 @@ function createLine() {
 
   const line = new BlurredLine(curve, 50);
   line.color = new THREE.Color('#FF0000');
-  line.strokeWidth = 2.0; // 2f
+  line.lineWidth = 2.0; // 2f
   line.smoothWidth = 10.0; // 3f
   line.updateGeometry();
 

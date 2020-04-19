@@ -9,7 +9,7 @@ var Params = function() {
   this.angleBisection = false;
   this.closed = false;
   this.color = '#000000';
-  this.strokeWidth = 2;
+  this.lineWidth = 2;
   this.smoothWidth = 10;
   this.smooth = true;
   this.opacity = 1.0;
@@ -123,9 +123,9 @@ function init() {
   			l.updateGeometry();
   		} );
   	} );
-  	gui.add(params, 'strokeWidth', 0.1, 250).onChange(function() {
+  	gui.add(params, 'lineWidth', 0.1, 250).onChange(function() {
   		lines.forEach( function( l ) {
-  			l.strokeWidth = params.strokeWidth;
+  			l.lineWidth = params.lineWidth;
   			l.updateGeometry();
   		} );
   	} );
@@ -221,7 +221,7 @@ function createLine(i) {
   const line = new BlurredLine(curve, parseInt(params.resolution), params.smooth);
   line.angleBisection = params.angleBisection;
   line.color = new THREE.Color(params.color);
-  line.strokeWidth = params.strokeWidth; // 2f
+  line.lineWidth = params.lineWidth; // 2f
   line.smoothWidth = params.smoothWidth; // 3f
   line.upVector = new THREE.Vector3(0.0, 0.0, 1.0);
   line.closed = params.closed;
@@ -236,7 +236,7 @@ function createLine(i) {
 }
 
 function createLines() {
-  lineMaterial = new BlurredLineMaterial({});
+  lineMaterial = new BlurredLineMaterial();
 
   for(var i = 0; i < params.amount; i++) {
   	createLine(i);
