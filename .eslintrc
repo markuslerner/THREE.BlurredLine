@@ -1,0 +1,28 @@
+{
+  "env": {
+    "browser": true
+  },
+  "parser": "babel-eslint",
+  "rules": {
+    "no-undef": [ 1 ],
+    "no-unused-vars": [ 1 ],
+    "comma-dangle": ["error", "only-multiline"],
+    "semi" : [2, "always"],
+    "strict": [2, "never"],
+    "indent": [2, 2],
+    "quotes": [2, "single"],
+    "linebreak-style": [2, "unix"],
+    "no-reserved-keys": 0,
+    "no-wrap-func": 0,
+    "no-console": 0,
+    "spaced-line-comment": 0,
+    "no-multiple-empty-lines": [2, {"max": 3}],
+    "padded-blocks": [0, "always"],
+    "space-before-function-paren": [2, "never"],
+    "keyword-spacing": ["error", { "overrides": {
+      "if": { "after": false },
+      "for": { "after": false },
+      "while": { "after": false }
+    } }],
+  }
+}
