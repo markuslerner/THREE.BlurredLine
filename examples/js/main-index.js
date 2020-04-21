@@ -187,9 +187,9 @@ function render() {
   var delta = clock.getDelta();
   lines.forEach( function( l ) {
     if(params.autoRotate ) {
-      l.mesh.rotation.y += 0.125 * delta;
+      l.rotation.y += 0.125 * delta;
     } else {
-      l.mesh.rotation.y = 0;
+      l.rotation.y = 0;
     }
   } );
 
@@ -223,8 +223,8 @@ function createLine(i) {
   line.upVector = new THREE.Vector3(0.0, 0.0, 1.0);
   line.closed = params.closed;
   line.updateGeometry();
-  scene.add(line.mesh);
-  line.mesh.position.x += i * 10;
+  scene.add(line);
+  line.position.x += i * 10;
   lines.push( line );
 
 }
@@ -240,7 +240,7 @@ function createLines() {
 function clearLines() {
 
   lines.forEach(function(l) {
-  	scene.remove(l.mesh);
+  	scene.remove(l);
   });
   lines = [];
 

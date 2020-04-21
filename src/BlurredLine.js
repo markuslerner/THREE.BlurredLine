@@ -14,13 +14,15 @@
   var LEFT_SMOOTH_LINE = 2;
   var RIGHT_SMOOTH_LINE = 3;
 
-  class BlurredLine {
+  class BlurredLine extends THREE.Mesh {
 
     constructor(curve, material, resolution = 1, blur = true) {
+      super(undefined, material);
+
+	    this.type = 'BlurredLine';
+
       this._resolution = resolution;
       this._blur = blur;
-
-      this.material = material;
 
       this.lineWidth = 1.0;
       this.blurWidth = 1.0;
@@ -83,8 +85,6 @@
       }
 
       this.createGeometry();
-
-      this.mesh = new THREE.Mesh(this.geometry, this.material);
 
     }
 
