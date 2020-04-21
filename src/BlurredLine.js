@@ -16,16 +16,12 @@
 
   class BlurredLine extends THREE.Mesh {
 
-    constructor(curve, material, resolution = 1, blur = true) {
+    constructor(curve, material, resolution = 1) {
       super(undefined, material);
 
 	    this.type = 'BlurredLine';
 
       this._resolution = resolution;
-      this._blur = blur;
-
-      this.lineWidth = 1.0;
-      this.blurWidth = 1.0;
 
       this.lineWidths = [];
       this.blurWidths = [];
@@ -43,8 +39,6 @@
       this.lineShapeVertices = [[]];
 
       // this.calculateNormals = true;
-
-      this.color = new THREE.Color();
 
       this.lineVertices = [];
       this.curve = curve; // curve to read vertices from
@@ -89,7 +83,7 @@
     }
 
     createGeometry() {
-      var trianglesCount = (this.lineShapeVertices.length - 1) * (this._blur ? 6 : 2);
+      var trianglesCount = (this.lineShapeVertices.length - 1) * (this.material.blur ? 6 : 2);
       this.geometry = new THREE.BufferGeometry();
       this.positions = new Float32Array(trianglesCount * 3 * 3);
       // this.normals = new Float32Array(trianglesCount * 3 * 3);
@@ -107,6 +101,8 @@
     }
 
     updateGeometry(filled = false) {
+      console.log('updateGeometry()');
+
       if(this.curve !== null) {
         // console.log( this.curve.getPoints(this._resolution) );
         this.lineVertices = this.curve.getPoints(this._resolution);
@@ -120,16 +116,19 @@
       }
 
       if(!this.useContantColor && this.colors.length <= this._resolution) {
-        console.error('Line.updateGeometry: colors Array length needs to be resolution + 1', this);
+        console.error('BlurredLine.updateGeometry: colors Array length needs to be resolution + 1', this);
       }
 
       if(this.lineVertices !== null) {
+        this.geometry.attributes.position.needsUpdate = true;
+        // this.geometry.attributes.normal.needsUpdate = true;
+
         this.updateLineShapeVertices();
 
         var lineShapeVertices = this.lineShapeVertices;
 
         for(let i = 0; i < this.lineShapeVertices.length - 1; i++) {
-          var index = i * 3 * 3 * (this._blur ? 6 : 2);
+          var index = i * 3 * 3 * (this.material.blur ? 6 : 2);
 
           if(filled) {
             // lineAtoms[i].setVertices(this.lineShapeVertices[i][LEFT_LINE],
@@ -153,7 +152,7 @@
             updatePosition(this.positions, index + 12, lineShapeVertices[i + 1][LEFT_LINE]);
             updatePosition(this.positions, index + 15, lineShapeVertices[i + 1][RIGHT_LINE]);
 
-            if(this._blur) {
+            if(this.material.blur) {
               // left blur
               updatePosition(this.positions, index + 18, lineShapeVertices[i][LEFT_LINE]);
               updatePosition(this.positions, index + 21, lineShapeVertices[i][LEFT_SMOOTH_LINE]);
@@ -184,7 +183,7 @@
             //     cb.cross(ab);
             //     cb.normalize();
             //     updatePosition(this.normals, index + c, cb);
-            //     if(this._blur) {
+            //     if(this.material.blur) {
             //       updatePosition(this.normals, index + c + 3, cb);
             //       updatePosition(this.normals, index + c + 6, cb);
             //     }
@@ -192,7 +191,7 @@
             // } else {
             //   for(let c = 0; c < 6 * 9; c += 9) {
             //     updatePosition(this.normals, index + c, this.upVector);
-            //     if(this._blur) {
+            //     if(this.material.blur) {
             //       updatePosition(this.normals, index + c + 3, this.upVector);
             //       updatePosition(this.normals, index + c + 6, this.upVector);
             //     }
@@ -203,84 +202,84 @@
 
         }
 
-
-        for(let i = 0; i < this.lineShapeVertices.length - 1; i++) {
-          var index = i * 3 * 4 * (this._blur ? 6 : 2);
-
-          if(this.useContantColor || this.colors.length <= this._resolution) {
-            var c = this.color;
-
-            // line
-            updateColor(this.vertexColors, index, c);
-            updateColor(this.vertexColors, index + 4, c);
-            updateColor(this.vertexColors, index + 8, c);
-
-            updateColor(this.vertexColors, index + 12, c);
-            updateColor(this.vertexColors, index + 16, c);
-            updateColor(this.vertexColors, index + 20, c);
-
-            if(this._blur) {
-              // left blur
-              updateColor(this.vertexColors, index + 24, c);
-              updateColor(this.vertexColors, index + 28, c, 0);
-              updateColor(this.vertexColors, index + 32, c, 0);
-
-              updateColor(this.vertexColors, index + 36, c);
-              updateColor(this.vertexColors, index + 40, c, 0);
-              updateColor(this.vertexColors, index + 44, c);
-
-              // right blur
-              updateColor(this.vertexColors, index + 48, c);
-              updateColor(this.vertexColors, index + 52, c);
-              updateColor(this.vertexColors, index + 56, c, 0);
-
-              updateColor(this.vertexColors, index + 60, c, 0);
-              updateColor(this.vertexColors, index + 64, c);
-              updateColor(this.vertexColors, index + 68, c, 0);
-            }
-
-          } else {
-            var c = this.colors[i];
-            var c2 = this.colors[i + 1];
-
-            // line
-            updateColor(this.vertexColors, index, c);
-            updateColor(this.vertexColors, index + 4, c2);
-            updateColor(this.vertexColors, index + 8, c);
-
-            updateColor(this.vertexColors, index + 12, c);
-            updateColor(this.vertexColors, index + 16, c2);
-            updateColor(this.vertexColors, index + 20, c2);
-
-            if(this._blur) {
-              // left blur
-              updateColor(this.vertexColors, index + 24, c);
-              updateColor(this.vertexColors, index + 28, c, 0);
-              updateColor(this.vertexColors, index + 32, c, 0);
-
-              updateColor(this.vertexColors, index + 36, c);
-              updateColor(this.vertexColors, index + 40, c, 0);
-              updateColor(this.vertexColors, index + 44, c2);
-
-              // right blur
-              updateColor(this.vertexColors, index + 48, c);
-              updateColor(this.vertexColors, index + 52, c2);
-              updateColor(this.vertexColors, index + 56, c, 0);
-
-              updateColor(this.vertexColors, index + 60, c, 0);
-              updateColor(this.vertexColors, index + 64, c2);
-              updateColor(this.vertexColors, index + 68, c, 0);
-            }
-          }
-
-        }
-
-
-        this.geometry.attributes.position.needsUpdate = true;
-        // this.geometry.attributes.normal.needsUpdate = true;
-        this.geometry.attributes.color.needsUpdate = true;
+        this.updateColors();
 
         // this.geometry.computeBoundingSphere();
+
+      }
+    }
+
+    updateColors() {
+      this.geometry.attributes.color.needsUpdate = true;
+
+      for(let i = 0; i < this.lineShapeVertices.length - 1; i++) {
+        var index = i * 3 * 4 * (this.material.blur ? 6 : 2);
+
+        if(this.useContantColor || this.colors.length <= this._resolution) {
+          var c = this.material.color;
+
+          // line
+          updateColor(this.vertexColors, index, c);
+          updateColor(this.vertexColors, index + 4, c);
+          updateColor(this.vertexColors, index + 8, c);
+
+          updateColor(this.vertexColors, index + 12, c);
+          updateColor(this.vertexColors, index + 16, c);
+          updateColor(this.vertexColors, index + 20, c);
+
+          if(this.material.blur) {
+            // left blur
+            updateColor(this.vertexColors, index + 24, c);
+            updateColor(this.vertexColors, index + 28, c, 0);
+            updateColor(this.vertexColors, index + 32, c, 0);
+
+            updateColor(this.vertexColors, index + 36, c);
+            updateColor(this.vertexColors, index + 40, c, 0);
+            updateColor(this.vertexColors, index + 44, c);
+
+            // right blur
+            updateColor(this.vertexColors, index + 48, c);
+            updateColor(this.vertexColors, index + 52, c);
+            updateColor(this.vertexColors, index + 56, c, 0);
+
+            updateColor(this.vertexColors, index + 60, c, 0);
+            updateColor(this.vertexColors, index + 64, c);
+            updateColor(this.vertexColors, index + 68, c, 0);
+          }
+
+        } else {
+          var c = this.colors[i];
+          var c2 = this.colors[i + 1];
+
+          // line
+          updateColor(this.vertexColors, index, c);
+          updateColor(this.vertexColors, index + 4, c2);
+          updateColor(this.vertexColors, index + 8, c);
+
+          updateColor(this.vertexColors, index + 12, c);
+          updateColor(this.vertexColors, index + 16, c2);
+          updateColor(this.vertexColors, index + 20, c2);
+
+          if(this.material.blur) {
+            // left blur
+            updateColor(this.vertexColors, index + 24, c);
+            updateColor(this.vertexColors, index + 28, c, 0);
+            updateColor(this.vertexColors, index + 32, c, 0);
+
+            updateColor(this.vertexColors, index + 36, c);
+            updateColor(this.vertexColors, index + 40, c, 0);
+            updateColor(this.vertexColors, index + 44, c2);
+
+            // right blur
+            updateColor(this.vertexColors, index + 48, c);
+            updateColor(this.vertexColors, index + 52, c2);
+            updateColor(this.vertexColors, index + 56, c, 0);
+
+            updateColor(this.vertexColors, index + 60, c, 0);
+            updateColor(this.vertexColors, index + 64, c2);
+            updateColor(this.vertexColors, index + 68, c, 0);
+          }
+        }
 
       }
     }
@@ -310,7 +309,7 @@
         this.lineShapeVertices[i][LEFT_LINE].copy(lineVertices[i]);
         this.lineShapeVertices[i][RIGHT_LINE].copy(lineVertices[i]);
 
-        if(this._blur) {
+        if(this.material.blur) {
           this.lineShapeVertices[i][LEFT_SMOOTH_LINE].copy(lineVertices[i]);
           this.lineShapeVertices[i][RIGHT_SMOOTH_LINE].copy(lineVertices[i]);
         }
@@ -385,7 +384,7 @@
         vectorSideCopy.copy(vectorSide);
 
         if(this.useContantLineWidth) {
-          vectorSide.multiplyScalar(this.lineWidth / 2.0);
+          vectorSide.multiplyScalar(this.material.lineWidth / 2.0);
         } else {
           vectorSide.multiplyScalar(this.lineWidths[i] / 2.0);
         }
@@ -393,16 +392,16 @@
         this.lineShapeVertices[i][LEFT_LINE].add(vectorSide);
         this.lineShapeVertices[i][RIGHT_LINE].sub(vectorSide);
 
-        if(this._blur) {
+        if(this.material.blur) {
           if(this.useContantLineWidth) {
             if(this.useContantSmoothWidth) {
-              vectorSideCopy.multiplyScalar((this.lineWidth / 2.0 + this.blurWidth));
+              vectorSideCopy.multiplyScalar((this.material.lineWidth / 2.0 + this.material.blurWidth));
             } else {
-              vectorSideCopy.multiplyScalar((this.lineWidth / 2.0 + this.blurWidths[i]));
+              vectorSideCopy.multiplyScalar((this.material.lineWidth / 2.0 + this.blurWidths[i]));
             }
           } else {
             if(this.useContantSmoothWidth) {
-              vectorSideCopy.multiplyScalar((this.lineWidths[i] / 2.0 + this.blurWidth));
+              vectorSideCopy.multiplyScalar((this.lineWidths[i] / 2.0 + this.material.blurWidth));
             } else {
               vectorSideCopy.multiplyScalar((this.lineWidths[i] / 2.0 + this.blurWidths[i]));
             }
@@ -417,7 +416,7 @@
       this.lineShapeVertices[this._resolution][LEFT_LINE].copy(lineVertices[this._resolution]);
       this.lineShapeVertices[this._resolution][RIGHT_LINE].copy(lineVertices[this._resolution]);
 
-      if(this._blur) {
+      if(this.material.blur) {
         this.lineShapeVertices[this._resolution][LEFT_SMOOTH_LINE].copy(lineVertices[this._resolution]);
         this.lineShapeVertices[this._resolution][RIGHT_SMOOTH_LINE].copy(lineVertices[this._resolution]);
       }
@@ -451,7 +450,7 @@
       vectorSideCopy.copy(vectorSide);
 
       if(this.useContantLineWidth) {
-        vectorSide.multiplyScalar(this.lineWidth / 2.0);
+        vectorSide.multiplyScalar(this.material.lineWidth / 2.0);
       } else {
         vectorSide.multiplyScalar(this.lineWidths[this._resolution] / 2.0);
       }
@@ -459,16 +458,16 @@
       this.lineShapeVertices[this._resolution][LEFT_LINE].add(vectorSide);
       this.lineShapeVertices[this._resolution][RIGHT_LINE].sub(vectorSide);
 
-      if(this._blur) {
+      if(this.material.blur) {
         if(this.useContantLineWidth) {
           if(this.useContantSmoothWidth) {
-            vectorSideCopy.multiplyScalar((this.lineWidth / 2.0 + this.blurWidth));
+            vectorSideCopy.multiplyScalar((this.material.lineWidth / 2.0 + this.material.blurWidth));
           } else {
-            vectorSideCopy.multiplyScalar((this.lineWidth / 2.0 + this.blurWidths[this._resolution]));
+            vectorSideCopy.multiplyScalar((this.material.lineWidth / 2.0 + this.blurWidths[this._resolution]));
           }
         } else {
           if(this.useContantSmoothWidth) {
-            vectorSideCopy.multiplyScalar((this.lineWidths[this._resolution] / 2.0 + this.blurWidth));
+            vectorSideCopy.multiplyScalar((this.lineWidths[this._resolution] / 2.0 + this.material.blurWidth));
           } else {
             vectorSideCopy.multiplyScalar((this.lineWidths[this._resolution] / 2.0 + this.blurWidths[this._resolution]));
           }
@@ -562,7 +561,7 @@
 
   class BlurredLineMaterial extends THREE.RawShaderMaterial {
     constructor(parameters) {
-      super(parameters);
+      super();
 
       if(!parameters) {
         parameters = {
@@ -578,6 +577,11 @@
         // time: { value: 1.0 },
         opacity: { value: 1.0 },
       };
+
+      this.color = new THREE.Color();
+      this.lineWidth = 1.0;
+      this.blurWidth = 1.0;
+      this.blur = true;
 
       this.vertexShader = `
         precision mediump float;
@@ -626,24 +630,6 @@
       this.type = 'BlurredLineMaterial';
 
       Object.defineProperties( this, {
-    		// lineWidth: {
-    		// 	enumerable: true,
-    		// 	get: function () {
-    		// 		return this.uniforms.lineWidth.value;
-    		// 	},
-    		// 	set: function ( value ) {
-    		// 		this.uniforms.lineWidth.value = value;
-    		// 	}
-    		// },
-    		// color: {
-    		// 	enumerable: true,
-    		// 	get: function () {
-    		// 		return this.uniforms.color.value;
-    		// 	},
-    		// 	set: function ( value ) {
-    		// 		this.uniforms.color.value = value;
-    		// 	}
-    		// },
     		opacity: {
     			enumerable: true,
     			get: function() {
@@ -663,8 +649,10 @@
 
       THREE.ShaderMaterial.prototype.copy.call( this, source );
 
-      // this.lineWidth = source.lineWidth;
-      // this.color.copy( source.color );
+      this.lineWidth = source.lineWidth;
+      this.blurWidth = source.blurWidth;
+      this.blur = source.blur;
+      this.color.copy( source.color );
       this.opacity = source.opacity;
 
       return this;

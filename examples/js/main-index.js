@@ -9,7 +9,7 @@ var Params = function() {
   this.angleBisection = false;
   this.closed = false;
   this.color = '#000000';
-  this.lineWidth = 2;
+  this.lineWidth = 1;
   this.blurWidth = 10;
   this.blur = true;
   this.opacity = 1.0;
@@ -41,7 +41,7 @@ function init() {
   // );
 
   curve = new THREE.CubicBezierCurve3(
-    new THREE.Vector3(-500, 0, -500),
+    new THREE.Vector3(-500, 0, -0),
     new THREE.Vector3(0, 0, 500),
     new THREE.Vector3(0, 300, 500),
     endPoint,
@@ -98,10 +98,8 @@ function init() {
   window.addEventListener( 'load', function() {
 
   	function update() {
-  		// if(params.autoUpdate ) {
-  			clearLines();
-  			createLines();
-  		// }
+      clearLines();
+      createLines();
   	}
 
   	gui.add(params, 'amount', 1, 1000).onChange( update );
@@ -112,26 +110,30 @@ function init() {
   			l.updateGeometry();
   		} );
   	} );
-    gui.add(params, 'closed').onChange( update );
+    gui.add(params, 'closed').onChange(function() {
+  		lines.forEach( function( l ) {
+  			l.closed = params.closed;
+        l.updateGeometry();
+  		} );
+  	} );
     gui.addColor(params, 'color').onChange(function() {
-      var color = new THREE.Color( params.color );
+      lineMaterial.color = new THREE.Color( params.color );
       // var hex = color.getHexString();
       // var css = color.getStyle();
 
   		lines.forEach( function( l ) {
-  			l.color = color;
-  			l.updateGeometry();
+  			l.updateColors();
   		} );
   	} );
   	gui.add(params, 'lineWidth', 0.1, 250).onChange(function() {
+      lineMaterial.lineWidth = params.lineWidth;
   		lines.forEach( function( l ) {
-  			l.lineWidth = params.lineWidth;
   			l.updateGeometry();
   		} );
   	} );
     gui.add(params, 'blurWidth', 0, 250).onChange(function() {
+      lineMaterial.blurWidth = params.blurWidth;
   		lines.forEach( function( l ) {
-  			l.blurWidth = params.blurWidth;
   			l.updateGeometry();
   		} );
   	} );
@@ -215,14 +217,13 @@ function onDocumentMouseMove(event) {
 }
 
 function createLine(i) {
-  const line = new BlurredLine(curve, lineMaterial, parseInt(params.resolution), params.blur);
+  const line = new BlurredLine(curve, lineMaterial, parseInt(params.resolution));
+  // line.resolution = parseInt(params.resolution);
   line.angleBisection = params.angleBisection;
-  line.color = new THREE.Color(params.color);
-  line.lineWidth = params.lineWidth; // 2f
-  line.blurWidth = params.blurWidth; // 3f
   line.upVector = new THREE.Vector3(0.0, 0.0, 1.0);
   line.closed = params.closed;
   line.updateGeometry();
+
   scene.add(line);
   line.position.x += i * 10;
   lines.push( line );
@@ -230,7 +231,13 @@ function createLine(i) {
 }
 
 function createLines() {
-  lineMaterial = new BlurredLineMaterial();
+  lineMaterial = new BlurredLineMaterial({
+    color: new THREE.Color(params.color),
+    lineWidth: params.lineWidth,
+    blurWidth: params.blurWidth,
+    blur: params.blur,
+    opacity: params.opacity,
+  });
 
   for(var i = 0; i < params.amount; i++) {
   	createLine(i);
