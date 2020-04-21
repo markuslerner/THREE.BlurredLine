@@ -1,9 +1,10 @@
 var container, stats;
 
 var camera, clock, scene, renderer;
-var curve, endPoint, handlesGeometry, lines = [], lineMaterial, params, wireframeMaterial;
+var curve, curves, endPoint, handlesGeometry, lines = [], lineMaterial, params, wireframeMaterial;
 
 var Params = function() {
+  this.curve = 'bezier';
   this.amount = 1;
   this.resolution = 50;
   this.angleBisection = false;
@@ -35,36 +36,32 @@ function init() {
 
   endPoint = new THREE.Vector3(0, 0, 0);
 
-  // curve = new THREE.LineCurve3(
-  //   new THREE.Vector3(-500, 0, -500),
-  //   endPoint
-  // );
+  curves = {};
 
-  curve = new THREE.CubicBezierCurve3(
+  curves.line = new THREE.LineCurve3(
+    new THREE.Vector3(-500, 0, -500),
+    endPoint
+  );
+
+  curves.path = new THREE.Path();
+  curves.path.lineTo( 0, 0 );
+  curves.path.quadraticCurveTo( 100, 100, 0, 200 );
+  curves.path.lineTo( 0, 500 );
+
+  curves.bezier = new THREE.CubicBezierCurve3(
     new THREE.Vector3(-500, 0, -500),
     new THREE.Vector3(0, 0, 500),
     new THREE.Vector3(0, 300, 500),
     endPoint,
   );
 
-  // curve = new THREE.Path();
-  // curve.lineTo( 0, 0 );
-  // curve.quadraticCurveTo( -500, 0, 0, 200 );
-  // curve.lineTo( 0, 500 );
-
-  // var curve = new THREE.QuadraticBezierCurve3(
-  // 	new THREE.Vector3( -100, 0, 0 ),
-  // 	new THREE.Vector3( 200, 150, 0 ),
-  // 	new THREE.Vector3( 100, 0, 0 )
-  // );
-
-  // curve = new THREE.EllipseCurve(
-  // 	0,  0,            // ax, aY
-  // 	200, 200,           // xRadius, yRadius
-  // 	0,  2 * Math.PI,  // aStartAngle, aEndAngle
-  // 	false,            // aClockwise
-  // 	0                 // aRotation
-  // );
+  curves.ellipse = new THREE.EllipseCurve(
+  	0,  0,            // ax, aY
+  	200, 200,           // xRadius, yRadius
+  	0,  2 * Math.PI,  // aStartAngle, aEndAngle
+  	false,            // aClockwise
+  	0                 // aRotation
+  );
 
   // outline:
   wireframeMaterial = new THREE.MeshBasicMaterial({
@@ -102,6 +99,13 @@ function init() {
       createLines();
   	}
 
+    gui.add(params, 'curve', ['bezier', 'line', 'path', 'ellipse']).onChange(function() {
+  		lines.forEach(function(l) {
+  			l.curve = curves[params.curve];
+        closedController.setValue(params.closed = params.curve === 'ellipse');
+  			l.updateGeometry();
+  		});
+  	});
   	gui.add(params, 'amount', 1, 1000).onChange( update );
     gui.add(params, 'resolution', 1, 100).onChange( update );
     gui.add(params, 'angleBisection').onChange(function() {
@@ -110,7 +114,7 @@ function init() {
   			l.updateGeometry();
   		});
   	});
-    gui.add(params, 'closed').onChange(function() {
+    var closedController = gui.add(params, 'closed').onChange(function() {
   		lines.forEach(function(l) {
   			l.closed = params.closed;
         l.updateGeometry();
@@ -217,7 +221,7 @@ function onDocumentMouseMove(event) {
 }
 
 function createLine(i) {
-  const line = new BlurredLine(curve, params.wireframe ? wireframeMaterial : lineMaterial, parseInt(params.resolution));
+  const line = new BlurredLine(curves[params.curve], params.wireframe ? wireframeMaterial : lineMaterial, parseInt(params.resolution));
   // line.resolution = parseInt(params.resolution);
   line.lineWidth = params.lineWidth;
   line.blurWidth = params.blurWidth;
