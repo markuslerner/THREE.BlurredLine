@@ -60,12 +60,16 @@ function createLine() {
     new THREE.Vector3(200, 100, 0),
   );
 
-  const line = new BlurredLine(curve, 50);
-  line.color = new THREE.Color('#FF0000');
-  line.lineWidth = 2.0; // 2f
-  line.smoothWidth = 10.0; // 3f
-  line.updateGeometry();
+  const material = new BlurredLineMaterial({
+    color: new THREE.Color('#FF0000'),
+    lineWidth: 2.0,
+    blurWidth: 10.0,
+    blur: true,
+    opacity: 1.0,
+  });
 
-  line.mesh = new THREE.Mesh(line.geometry, undefined);
-  scene.add(line.mesh);
+  const line = new BlurredLine(curve, material, 50);
+  line.updateGeometry();
+  scene.add(line);
+
 }
