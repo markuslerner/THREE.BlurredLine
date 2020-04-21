@@ -62,13 +62,13 @@ function createLine() {
 
   const material = new BlurredLineMaterial({
     color: new THREE.Color('#FF0000'),
-    lineWidth: 2.0,
-    blurWidth: 10.0,
-    blur: true,
     opacity: 1.0,
   });
 
   const line = new BlurredLine(curve, material, 50);
+  line.lineWidth = 2.0;
+  line.blurWidth = 10.0;
+  line.blur = true;
   line.updateGeometry();
   scene.add(line);
 

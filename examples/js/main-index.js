@@ -41,7 +41,7 @@ function init() {
   // );
 
   curve = new THREE.CubicBezierCurve3(
-    new THREE.Vector3(-500, 0, -0),
+    new THREE.Vector3(-500, 0, -500),
     new THREE.Vector3(0, 0, 500),
     new THREE.Vector3(0, 300, 500),
     endPoint,
@@ -105,43 +105,43 @@ function init() {
   	gui.add(params, 'amount', 1, 1000).onChange( update );
     gui.add(params, 'resolution', 1, 100).onChange( update );
     gui.add(params, 'angleBisection').onChange(function() {
-  		lines.forEach( function( l ) {
+  		lines.forEach(function(l) {
   			l.angleBisection = params.angleBisection;
   			l.updateGeometry();
-  		} );
-  	} );
+  		});
+  	});
     gui.add(params, 'closed').onChange(function() {
-  		lines.forEach( function( l ) {
+  		lines.forEach(function(l) {
   			l.closed = params.closed;
         l.updateGeometry();
-  		} );
-  	} );
+  		});
+  	});
     gui.addColor(params, 'color').onChange(function() {
-      lineMaterial.color = new THREE.Color( params.color );
+      lineMaterial.color = new THREE.Color(params.color);
       // var hex = color.getHexString();
       // var css = color.getStyle();
-
-  		lines.forEach( function( l ) {
-  			l.updateColors();
-  		} );
-  	} );
+  	});
   	gui.add(params, 'lineWidth', 0.1, 250).onChange(function() {
-      lineMaterial.lineWidth = params.lineWidth;
-  		lines.forEach( function( l ) {
+  		lines.forEach(function(l) {
+        l.lineWidth = params.lineWidth;
   			l.updateGeometry();
-  		} );
-  	} );
+  		});
+  	});
     gui.add(params, 'blurWidth', 0, 250).onChange(function() {
-      lineMaterial.blurWidth = params.blurWidth;
-  		lines.forEach( function( l ) {
+  		lines.forEach(function(l) {
+        l.blurWidth = params.blurWidth;
   			l.updateGeometry();
-  		} );
-  	} );
+  		});
+  	});
     gui.add(params, 'blur').onChange( update );
   	gui.add(params, 'opacity', 0.0, 1.0).onChange(function() {
       lineMaterial.opacity = params.opacity;
-  	} );
-    gui.add(params, 'wireframe').onChange( update );
+  	});
+    gui.add(params, 'wireframe').onChange(function() {
+      lines.forEach(function(l) {
+  			l.material = params.wireframe ? wireframeMaterial : lineMaterial;
+  		});
+  	});
     gui.add(params, 'autoRotate');
   } );
 
@@ -187,7 +187,7 @@ function animate() {
 function render() {
 
   var delta = clock.getDelta();
-  lines.forEach( function( l ) {
+  lines.forEach(function(l) {
     if(params.autoRotate ) {
       l.rotation.y += 0.125 * delta;
     } else {
@@ -217,8 +217,11 @@ function onDocumentMouseMove(event) {
 }
 
 function createLine(i) {
-  const line = new BlurredLine(curve, lineMaterial, parseInt(params.resolution));
+  const line = new BlurredLine(curve, params.wireframe ? wireframeMaterial : lineMaterial, parseInt(params.resolution));
   // line.resolution = parseInt(params.resolution);
+  line.lineWidth = params.lineWidth;
+  line.blurWidth = params.blurWidth;
+  line.blur = params.blur;
   line.angleBisection = params.angleBisection;
   line.upVector = new THREE.Vector3(0.0, 0.0, 1.0);
   line.closed = params.closed;
@@ -233,9 +236,9 @@ function createLine(i) {
 function createLines() {
   lineMaterial = new BlurredLineMaterial({
     color: new THREE.Color(params.color),
-    lineWidth: params.lineWidth,
-    blurWidth: params.blurWidth,
-    blur: params.blur,
+    // lineWidth: params.lineWidth,
+    // blurWidth: params.blurWidth,
+    // blur: params.blur,
     opacity: params.opacity,
   });
 

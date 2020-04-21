@@ -23,6 +23,11 @@
 
       this._resolution = resolution;
 
+      this.lineWidth = 1.0;
+      this.blurWidth = 1.0;
+      this.blur = true;
+      this.color = new THREE.Color();
+
       this.lineWidths = [];
       this.blurWidths = [];
       this.colors = [];
@@ -34,6 +39,7 @@
       this.useContantColor = true;
       this.useContantLineWidth = true;
       this.useContantSmoothWidth = true;
+
       this.angleBisection = false; // true: good for 2d
 
       this.lineShapeVertices = [[]];
@@ -83,7 +89,7 @@
     }
 
     createGeometry() {
-      var trianglesCount = (this.lineShapeVertices.length - 1) * (this.material.blur ? 6 : 2);
+      var trianglesCount = (this.lineShapeVertices.length - 1) * (this.blur ? 6 : 2);
       this.geometry = new THREE.BufferGeometry();
       this.positions = new Float32Array(trianglesCount * 3 * 3);
       // this.normals = new Float32Array(trianglesCount * 3 * 3);
@@ -101,7 +107,7 @@
     }
 
     updateGeometry(filled = false) {
-      console.log('updateGeometry()');
+      // console.log('updateGeometry()');
 
       if(this.curve !== null) {
         // console.log( this.curve.getPoints(this._resolution) );
@@ -128,7 +134,7 @@
         var lineShapeVertices = this.lineShapeVertices;
 
         for(let i = 0; i < this.lineShapeVertices.length - 1; i++) {
-          var index = i * 3 * 3 * (this.material.blur ? 6 : 2);
+          var index = i * 3 * 3 * (this.blur ? 6 : 2);
 
           if(filled) {
             // lineAtoms[i].setVertices(this.lineShapeVertices[i][LEFT_LINE],
@@ -152,7 +158,7 @@
             updatePosition(this.positions, index + 12, lineShapeVertices[i + 1][LEFT_LINE]);
             updatePosition(this.positions, index + 15, lineShapeVertices[i + 1][RIGHT_LINE]);
 
-            if(this.material.blur) {
+            if(this.blur) {
               // left blur
               updatePosition(this.positions, index + 18, lineShapeVertices[i][LEFT_LINE]);
               updatePosition(this.positions, index + 21, lineShapeVertices[i][LEFT_SMOOTH_LINE]);
@@ -183,7 +189,7 @@
             //     cb.cross(ab);
             //     cb.normalize();
             //     updatePosition(this.normals, index + c, cb);
-            //     if(this.material.blur) {
+            //     if(this.blur) {
             //       updatePosition(this.normals, index + c + 3, cb);
             //       updatePosition(this.normals, index + c + 6, cb);
             //     }
@@ -191,7 +197,7 @@
             // } else {
             //   for(let c = 0; c < 6 * 9; c += 9) {
             //     updatePosition(this.normals, index + c, this.upVector);
-            //     if(this.material.blur) {
+            //     if(this.blur) {
             //       updatePosition(this.normals, index + c + 3, this.upVector);
             //       updatePosition(this.normals, index + c + 6, this.upVector);
             //     }
@@ -213,10 +219,10 @@
       this.geometry.attributes.color.needsUpdate = true;
 
       for(let i = 0; i < this.lineShapeVertices.length - 1; i++) {
-        var index = i * 3 * 4 * (this.material.blur ? 6 : 2);
+        var index = i * 3 * 4 * (this.blur ? 6 : 2);
 
         if(this.useContantColor || this.colors.length <= this._resolution) {
-          var c = this.material.color;
+          var c = this.color;
 
           // line
           updateColor(this.vertexColors, index, c);
@@ -227,7 +233,7 @@
           updateColor(this.vertexColors, index + 16, c);
           updateColor(this.vertexColors, index + 20, c);
 
-          if(this.material.blur) {
+          if(this.blur) {
             // left blur
             updateColor(this.vertexColors, index + 24, c);
             updateColor(this.vertexColors, index + 28, c, 0);
@@ -260,7 +266,7 @@
           updateColor(this.vertexColors, index + 16, c2);
           updateColor(this.vertexColors, index + 20, c2);
 
-          if(this.material.blur) {
+          if(this.blur) {
             // left blur
             updateColor(this.vertexColors, index + 24, c);
             updateColor(this.vertexColors, index + 28, c, 0);
@@ -309,7 +315,7 @@
         this.lineShapeVertices[i][LEFT_LINE].copy(lineVertices[i]);
         this.lineShapeVertices[i][RIGHT_LINE].copy(lineVertices[i]);
 
-        if(this.material.blur) {
+        if(this.blur) {
           this.lineShapeVertices[i][LEFT_SMOOTH_LINE].copy(lineVertices[i]);
           this.lineShapeVertices[i][RIGHT_SMOOTH_LINE].copy(lineVertices[i]);
         }
@@ -384,7 +390,7 @@
         vectorSideCopy.copy(vectorSide);
 
         if(this.useContantLineWidth) {
-          vectorSide.multiplyScalar(this.material.lineWidth / 2.0);
+          vectorSide.multiplyScalar(this.lineWidth / 2.0);
         } else {
           vectorSide.multiplyScalar(this.lineWidths[i] / 2.0);
         }
@@ -392,16 +398,16 @@
         this.lineShapeVertices[i][LEFT_LINE].add(vectorSide);
         this.lineShapeVertices[i][RIGHT_LINE].sub(vectorSide);
 
-        if(this.material.blur) {
+        if(this.blur) {
           if(this.useContantLineWidth) {
             if(this.useContantSmoothWidth) {
-              vectorSideCopy.multiplyScalar((this.material.lineWidth / 2.0 + this.material.blurWidth));
+              vectorSideCopy.multiplyScalar((this.lineWidth / 2.0 + this.blurWidth));
             } else {
-              vectorSideCopy.multiplyScalar((this.material.lineWidth / 2.0 + this.blurWidths[i]));
+              vectorSideCopy.multiplyScalar((this.lineWidth / 2.0 + this.blurWidths[i]));
             }
           } else {
             if(this.useContantSmoothWidth) {
-              vectorSideCopy.multiplyScalar((this.lineWidths[i] / 2.0 + this.material.blurWidth));
+              vectorSideCopy.multiplyScalar((this.lineWidths[i] / 2.0 + this.blurWidth));
             } else {
               vectorSideCopy.multiplyScalar((this.lineWidths[i] / 2.0 + this.blurWidths[i]));
             }
@@ -416,7 +422,7 @@
       this.lineShapeVertices[this._resolution][LEFT_LINE].copy(lineVertices[this._resolution]);
       this.lineShapeVertices[this._resolution][RIGHT_LINE].copy(lineVertices[this._resolution]);
 
-      if(this.material.blur) {
+      if(this.blur) {
         this.lineShapeVertices[this._resolution][LEFT_SMOOTH_LINE].copy(lineVertices[this._resolution]);
         this.lineShapeVertices[this._resolution][RIGHT_SMOOTH_LINE].copy(lineVertices[this._resolution]);
       }
@@ -450,7 +456,7 @@
       vectorSideCopy.copy(vectorSide);
 
       if(this.useContantLineWidth) {
-        vectorSide.multiplyScalar(this.material.lineWidth / 2.0);
+        vectorSide.multiplyScalar(this.lineWidth / 2.0);
       } else {
         vectorSide.multiplyScalar(this.lineWidths[this._resolution] / 2.0);
       }
@@ -458,16 +464,16 @@
       this.lineShapeVertices[this._resolution][LEFT_LINE].add(vectorSide);
       this.lineShapeVertices[this._resolution][RIGHT_LINE].sub(vectorSide);
 
-      if(this.material.blur) {
+      if(this.blur) {
         if(this.useContantLineWidth) {
           if(this.useContantSmoothWidth) {
-            vectorSideCopy.multiplyScalar((this.material.lineWidth / 2.0 + this.material.blurWidth));
+            vectorSideCopy.multiplyScalar((this.lineWidth / 2.0 + this.blurWidth));
           } else {
-            vectorSideCopy.multiplyScalar((this.material.lineWidth / 2.0 + this.blurWidths[this._resolution]));
+            vectorSideCopy.multiplyScalar((this.lineWidth / 2.0 + this.blurWidths[this._resolution]));
           }
         } else {
           if(this.useContantSmoothWidth) {
-            vectorSideCopy.multiplyScalar((this.lineWidths[this._resolution] / 2.0 + this.material.blurWidth));
+            vectorSideCopy.multiplyScalar((this.lineWidths[this._resolution] / 2.0 + this.blurWidth));
           } else {
             vectorSideCopy.multiplyScalar((this.lineWidths[this._resolution] / 2.0 + this.blurWidths[this._resolution]));
           }
@@ -566,22 +572,21 @@
       if(!parameters) {
         parameters = {
           depthTest: false,
+          side: THREE.DoubleSide,
           transparent: true,
         };
       } else {
         if(parameters.depthTest === undefined) parameters.depthTest = false;
+        if(parameters.side === undefined) parameters.side = THREE.DoubleSide;
         if(parameters.transparent === undefined) parameters.transparent = true;
       }
 
       this.uniforms = {
-        // time: { value: 1.0 },
+        materialColor: { value: new THREE.Color( 0xffffff ) },
         opacity: { value: 1.0 },
       };
 
       this.color = new THREE.Color();
-      this.lineWidth = 1.0;
-      this.blurWidth = 1.0;
-      this.blur = true;
 
       this.vertexShader = `
         precision mediump float;
@@ -593,13 +598,16 @@
         attribute vec3 position;
         attribute vec4 color;
 
+        uniform vec3 materialColor;
+        uniform float opacity;
+
         // varying vec3 vPosition;
         varying vec4 vColor;
 
         void main()	{
 
           // vPosition = position;
-          vColor = color;
+          vColor = color * vec4( materialColor, opacity );
 
           gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
 
@@ -610,19 +618,20 @@
         precision mediump float;
         precision mediump int;
 
-        uniform float time;
-        uniform float opacity;
+        // uniform float time;
+        // uniform float color;
+        // uniform float opacity;
 
         // varying vec3 vPosition;
         varying vec4 vColor;
 
         void main()	{
 
-          vec4 color = vec4( vColor );
-          color.a *= opacity;
+          vec4 c = vColor;
+          // c.a *= opacity;
           // color.r += sin( vPosition.x * 10.0 + time ) * 0.5;
 
-          gl_FragColor = color;
+          gl_FragColor = c;
 
         }
       `;
@@ -630,6 +639,15 @@
       this.type = 'BlurredLineMaterial';
 
       Object.defineProperties( this, {
+        color: {
+    			enumerable: true,
+    			get: function() {
+    				return this.uniforms.materialColor.value;
+    			},
+    			set: function(value) {
+    				this.uniforms.materialColor.value = value;
+    			}
+    		},
     		opacity: {
     			enumerable: true,
     			get: function() {
@@ -649,9 +667,6 @@
 
       THREE.ShaderMaterial.prototype.copy.call( this, source );
 
-      this.lineWidth = source.lineWidth;
-      this.blurWidth = source.blurWidth;
-      this.blur = source.blur;
       this.color.copy( source.color );
       this.opacity = source.opacity;
 
