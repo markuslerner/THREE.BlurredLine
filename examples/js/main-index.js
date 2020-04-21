@@ -10,8 +10,8 @@ var Params = function() {
   this.closed = false;
   this.color = '#000000';
   this.lineWidth = 2;
-  this.smoothWidth = 10;
-  this.smooth = true;
+  this.blurWidth = 10;
+  this.blur = true;
   this.opacity = 1.0;
   this.wireframe = false;
   this.autoRotate = false;
@@ -129,13 +129,13 @@ function init() {
   			l.updateGeometry();
   		} );
   	} );
-    gui.add(params, 'smoothWidth', 0, 250).onChange(function() {
+    gui.add(params, 'blurWidth', 0, 250).onChange(function() {
   		lines.forEach( function( l ) {
-  			l.smoothWidth = params.smoothWidth;
+  			l.blurWidth = params.blurWidth;
   			l.updateGeometry();
   		} );
   	} );
-    gui.add(params, 'smooth').onChange( update );
+    gui.add(params, 'blur').onChange( update );
   	gui.add(params, 'opacity', 0.0, 1.0).onChange(function() {
       lineMaterial.opacity = params.opacity;
   	} );
@@ -215,11 +215,11 @@ function onDocumentMouseMove(event) {
 }
 
 function createLine(i) {
-  const line = new BlurredLine(curve, lineMaterial, parseInt(params.resolution), params.smooth);
+  const line = new BlurredLine(curve, lineMaterial, parseInt(params.resolution), params.blur);
   line.angleBisection = params.angleBisection;
   line.color = new THREE.Color(params.color);
   line.lineWidth = params.lineWidth; // 2f
-  line.smoothWidth = params.smoothWidth; // 3f
+  line.blurWidth = params.blurWidth; // 3f
   line.upVector = new THREE.Vector3(0.0, 0.0, 1.0);
   line.closed = params.closed;
   line.updateGeometry();
