@@ -63,6 +63,14 @@ function init() {
   	0                 // aRotation
   );
 
+  curves.spline = new THREE.SplineCurve([
+  	new THREE.Vector2( -100, 0 ),
+  	new THREE.Vector2( -50, 50 ),
+  	new THREE.Vector2( 0, 0 ),
+  	new THREE.Vector2( 50, -50 ),
+  	new THREE.Vector2( 100, 0 )
+  ]);
+
   // outline:
   wireframeMaterial = new THREE.MeshBasicMaterial({
   	color: 0xFF0000,
@@ -99,7 +107,7 @@ function init() {
       createLines();
   	}
 
-    gui.add(params, 'curve', ['bezier', 'line', 'path', 'ellipse']).onChange(function() {
+    gui.add(params, 'curve', ['bezier', 'line', 'path', 'ellipse', 'spline']).onChange(function() {
   		lines.forEach(function(l) {
   			l.curve = curves[params.curve];
         closedController.setValue(params.closed = params.curve === 'ellipse');
@@ -222,7 +230,6 @@ function onDocumentMouseMove(event) {
 
 function createLine(i) {
   const line = new BlurredLine(curves[params.curve], params.wireframe ? wireframeMaterial : lineMaterial, parseInt(params.resolution));
-  // line.resolution = parseInt(params.resolution);
   line.lineWidth = params.lineWidth;
   line.blurWidth = params.blurWidth;
   line.blur = params.blur;
@@ -240,9 +247,6 @@ function createLine(i) {
 function createLines() {
   lineMaterial = new BlurredLineMaterial({
     color: new THREE.Color(params.color),
-    // lineWidth: params.lineWidth,
-    // blurWidth: params.blurWidth,
-    // blur: params.blur,
     opacity: params.opacity,
   });
 
