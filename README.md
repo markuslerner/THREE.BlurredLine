@@ -1,5 +1,7 @@
 # THREE.BlurredLine
 
+[![NPM Package](https://img.shields.io/npm/v/three.blurredline.svg?style=flat)](https://www.npmjs.com/package/three.blurredline)
+
 Draw lines of varying widths with a soft blurry edge in [THREE.js](https://github.com/mrdoob/three.js/)
 
 This libary draws lines as a mesh and internally creates a BufferGeometry.
