@@ -28,17 +28,9 @@
       this.blur = true;
       this.color = new THREE.Color();
 
-      this.lineWidths = [];
-      this.blurWidths = [];
-      this.colors = [];
-
       this.upVector = new THREE.Vector3(0.0, 0.0, 1.0);
 
       this.closed = false;
-
-      this.useContantColor = true;
-      this.useContantLineWidth = true;
-      this.useContantSmoothWidth = true;
 
       this.angleBisection = false; // true: good for 2d
 
@@ -51,27 +43,6 @@
 
       for(let i = 0; i < this._resolution + 1; i++) {
         this.lineVertices[i] = new THREE.Vector3();
-      }
-
-      if(this.colors === null) {
-        this.colors = [];
-        for(let i = 0; i < this._resolution + 1; i++) {
-          this.colors[i] = new THREE.Color();
-        }
-      }
-
-      if(this.lineWidths === null) {
-        this.lineWidths = [];
-        for(let i = 0; i < this._resolution + 1; i++) {
-          this.lineWidths[i] = 1.0;
-        }
-      }
-
-      if(this.blurWidths === null) {
-        this.blurWidths = [];
-        for(let i = 0; i < this._resolution + 1; i++) {
-          this.blurWidths[i] = 0.0;
-        }
       }
 
       this.lineShapeVertices = [];
@@ -119,10 +90,6 @@
   				}
   			}
 
-      }
-
-      if(!this.useContantColor && this.colors.length <= this._resolution) {
-        console.error('BlurredLine.updateGeometry: colors Array length needs to be resolution + 1', this);
       }
 
       if(this.lineVertices !== null) {
@@ -221,70 +188,35 @@
       for(let i = 0; i < this.lineShapeVertices.length - 1; i++) {
         var index = i * 3 * 4 * (this.blur ? 6 : 2);
 
-        if(this.useContantColor || this.colors.length <= this._resolution) {
-          var c = this.color;
+        var c = this._getColor(i / (this._resolution - 1));
 
-          // line
-          updateColor(this.vertexColors, index, c);
-          updateColor(this.vertexColors, index + 4, c);
-          updateColor(this.vertexColors, index + 8, c);
+        // line
+        updateColor(this.vertexColors, index, c);
+        updateColor(this.vertexColors, index + 4, c);
+        updateColor(this.vertexColors, index + 8, c);
 
-          updateColor(this.vertexColors, index + 12, c);
-          updateColor(this.vertexColors, index + 16, c);
-          updateColor(this.vertexColors, index + 20, c);
+        updateColor(this.vertexColors, index + 12, c);
+        updateColor(this.vertexColors, index + 16, c);
+        updateColor(this.vertexColors, index + 20, c);
 
-          if(this.blur) {
-            // left blur
-            updateColor(this.vertexColors, index + 24, c);
-            updateColor(this.vertexColors, index + 28, c, 0);
-            updateColor(this.vertexColors, index + 32, c, 0);
+        if(this.blur) {
+          // left blur
+          updateColor(this.vertexColors, index + 24, c);
+          updateColor(this.vertexColors, index + 28, c, 0);
+          updateColor(this.vertexColors, index + 32, c, 0);
 
-            updateColor(this.vertexColors, index + 36, c);
-            updateColor(this.vertexColors, index + 40, c, 0);
-            updateColor(this.vertexColors, index + 44, c);
+          updateColor(this.vertexColors, index + 36, c);
+          updateColor(this.vertexColors, index + 40, c, 0);
+          updateColor(this.vertexColors, index + 44, c);
 
-            // right blur
-            updateColor(this.vertexColors, index + 48, c);
-            updateColor(this.vertexColors, index + 52, c);
-            updateColor(this.vertexColors, index + 56, c, 0);
+          // right blur
+          updateColor(this.vertexColors, index + 48, c);
+          updateColor(this.vertexColors, index + 52, c);
+          updateColor(this.vertexColors, index + 56, c, 0);
 
-            updateColor(this.vertexColors, index + 60, c, 0);
-            updateColor(this.vertexColors, index + 64, c);
-            updateColor(this.vertexColors, index + 68, c, 0);
-          }
-
-        } else {
-          var c = this.colors[i];
-          var c2 = this.colors[i + 1];
-
-          // line
-          updateColor(this.vertexColors, index, c);
-          updateColor(this.vertexColors, index + 4, c2);
-          updateColor(this.vertexColors, index + 8, c);
-
-          updateColor(this.vertexColors, index + 12, c);
-          updateColor(this.vertexColors, index + 16, c2);
-          updateColor(this.vertexColors, index + 20, c2);
-
-          if(this.blur) {
-            // left blur
-            updateColor(this.vertexColors, index + 24, c);
-            updateColor(this.vertexColors, index + 28, c, 0);
-            updateColor(this.vertexColors, index + 32, c, 0);
-
-            updateColor(this.vertexColors, index + 36, c);
-            updateColor(this.vertexColors, index + 40, c, 0);
-            updateColor(this.vertexColors, index + 44, c2);
-
-            // right blur
-            updateColor(this.vertexColors, index + 48, c);
-            updateColor(this.vertexColors, index + 52, c2);
-            updateColor(this.vertexColors, index + 56, c, 0);
-
-            updateColor(this.vertexColors, index + 60, c, 0);
-            updateColor(this.vertexColors, index + 64, c2);
-            updateColor(this.vertexColors, index + 68, c, 0);
-          }
+          updateColor(this.vertexColors, index + 60, c, 0);
+          updateColor(this.vertexColors, index + 64, c);
+          updateColor(this.vertexColors, index + 68, c, 0);
         }
 
       }
@@ -389,29 +321,14 @@
         vectorSide.normalize();
         vectorSideCopy.copy(vectorSide);
 
-        if(this.useContantLineWidth) {
-          vectorSide.multiplyScalar(this.lineWidth / 2.0);
-        } else {
-          vectorSide.multiplyScalar(this.lineWidths[i] / 2.0);
-        }
+        vectorSide.multiplyScalar(this._getLineWidth(i / this._resolution) / 2.0);
 
         this.lineShapeVertices[i][LEFT_LINE].add(vectorSide);
         this.lineShapeVertices[i][RIGHT_LINE].sub(vectorSide);
 
         if(this.blur) {
-          if(this.useContantLineWidth) {
-            if(this.useContantSmoothWidth) {
-              vectorSideCopy.multiplyScalar((this.lineWidth / 2.0 + this.blurWidth));
-            } else {
-              vectorSideCopy.multiplyScalar((this.lineWidth / 2.0 + this.blurWidths[i]));
-            }
-          } else {
-            if(this.useContantSmoothWidth) {
-              vectorSideCopy.multiplyScalar((this.lineWidths[i] / 2.0 + this.blurWidth));
-            } else {
-              vectorSideCopy.multiplyScalar((this.lineWidths[i] / 2.0 + this.blurWidths[i]));
-            }
-          }
+          const p = i / this._resolution;
+          vectorSideCopy.multiplyScalar(this._getLineWidth(p) / 2.0 + this._getBlurWidth(p));
 
           this.lineShapeVertices[i][LEFT_SMOOTH_LINE].add(vectorSideCopy);
           this.lineShapeVertices[i][RIGHT_SMOOTH_LINE].sub(vectorSideCopy);
@@ -455,29 +372,13 @@
       vectorSide.normalize();
       vectorSideCopy.copy(vectorSide);
 
-      if(this.useContantLineWidth) {
-        vectorSide.multiplyScalar(this.lineWidth / 2.0);
-      } else {
-        vectorSide.multiplyScalar(this.lineWidths[this._resolution] / 2.0);
-      }
+      vectorSide.multiplyScalar(this._getLineWidth(1) / 2.0);
 
       this.lineShapeVertices[this._resolution][LEFT_LINE].add(vectorSide);
       this.lineShapeVertices[this._resolution][RIGHT_LINE].sub(vectorSide);
 
       if(this.blur) {
-        if(this.useContantLineWidth) {
-          if(this.useContantSmoothWidth) {
-            vectorSideCopy.multiplyScalar((this.lineWidth / 2.0 + this.blurWidth));
-          } else {
-            vectorSideCopy.multiplyScalar((this.lineWidth / 2.0 + this.blurWidths[this._resolution]));
-          }
-        } else {
-          if(this.useContantSmoothWidth) {
-            vectorSideCopy.multiplyScalar((this.lineWidths[this._resolution] / 2.0 + this.blurWidth));
-          } else {
-            vectorSideCopy.multiplyScalar((this.lineWidths[this._resolution] / 2.0 + this.blurWidths[this._resolution]));
-          }
-        }
+        vectorSideCopy.multiplyScalar(this._getLineWidth(1) / 2.0 + this._getBlurWidth(1));
 
         this.lineShapeVertices[this._resolution][LEFT_SMOOTH_LINE].add(vectorSideCopy);
         this.lineShapeVertices[this._resolution][RIGHT_SMOOTH_LINE].sub(vectorSideCopy);
@@ -543,6 +444,30 @@
         point.lerp(this.lineVertices[startIndex + 1], delta);
       }
       return point;
+    }
+
+    _getLineWidth(p) {
+      if(this.lineWidthModifier) {
+        return this.lineWidth * this.lineWidthModifier(p);
+      } else {
+        return this.lineWidth;
+      }
+    }
+
+    _getBlurWidth(p) {
+      if(this.blurWidthModifier) {
+        return this.blurWidth * this.blurWidthModifier(p);
+      } else {
+        return this.blurWidth;
+      }
+    }
+
+    _getColor(p) {
+      if(this.colorModifier) {
+        return this.color.clone().multiply(this.colorModifier(p));
+      } else {
+        return this.color;
+      }
     }
 
     toString() {
