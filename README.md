@@ -22,10 +22,24 @@ It is useful not only for drawing wide soft lines, but also extreme thin lines n
 
 #### Including the script ####
 
-Include script after THREE is included
+Include script after THREE is included:
+
 ```js
-<script src="BlurredLine.js"></script>
+<script src="src/BlurredLine.js"></script>
 ```
+
+or use npm to install it:
+
+```
+npm i three.blurredline
+```
+
+and include it in your code:
+```js
+import * as THREE from 'three';
+import { BlurredLine, BlurredLineMaterial } from 'three.blurredline';
+```
+
 
 ##### Create a Curve #####
 
