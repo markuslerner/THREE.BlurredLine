@@ -1,8 +1,4 @@
 # THREE.BlurredLine
-========
-
-[![NPM Package][npm]][npm-url]
-[![Build Size][build-size]][build-size-url]
 
 Draw lines of varying widths with a soft blurry edge in [THREE.js](https://github.com/mrdoob/three.js/)
 
