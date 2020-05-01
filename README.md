@@ -30,6 +30,12 @@ Include script after THREE is included:
 <script src="src/BlurredLine.js"></script>
 ```
 
+or include directly from unpkg.com:
+
+```js
+<script src="https://unpkg.com/three.blurredline@1.0.0/src/BlurredLine.js"></script>
+```
+
 or use npm to install it:
 
 ```
