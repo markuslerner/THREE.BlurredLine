@@ -39,5 +39,19 @@ h1 {
 }
 
 #title {
-  position: absolute; left: 110px; top: 25px;
+  position: absolute;
+  left: 110px;
+  top: 25px;
+}
+
+
+#info {
+  z-index: 1;
+  position: absolute;
+  left: 110px;
+  bottom: 40px;
+}
+
+a {
+  color: #333;
 }
