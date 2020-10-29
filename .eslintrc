@@ -4,7 +4,6 @@
   },
   "parser": "babel-eslint",
   "rules": {
-    "no-undef": [ 1 ],
     "no-unused-vars": [ 1 ],
     "comma-dangle": ["error", "only-multiline"],
     "semi" : [2, "always"],
@@ -17,12 +16,5 @@
     "no-console": 0,
     "spaced-line-comment": 0,
     "no-multiple-empty-lines": [2, {"max": 3}],
-    "padded-blocks": [0, "always"],
-    "space-before-function-paren": [2, "never"],
-    "keyword-spacing": ["error", { "overrides": {
-      "if": { "after": false },
-      "for": { "after": false },
-      "while": { "after": false }
-    } }],
   }
 }

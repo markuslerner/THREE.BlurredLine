@@ -1,12 +1,11 @@
-;(function() {
-
+(function () {
   var root = this;
 
   var has_require = typeof require !== 'undefined';
 
-  var THREE = root.THREE || has_require && require('three');
-  if( !THREE ) {
-  	throw new Error( 'SmoothLine requires three.js' );
+  var THREE = root.THREE || (has_require && require('three'));
+  if (!THREE) {
+    throw new Error('SmoothLine requires three.js');
   }
 
   var LEFT_LINE = 0;
@@ -15,11 +14,10 @@
   var RIGHT_SMOOTH_LINE = 3;
 
   class BlurredLine extends THREE.Mesh {
-
     constructor(curve, material, resolution = 1) {
       super(undefined, material);
 
-	    this.type = 'BlurredLine';
+      this.type = 'BlurredLine';
 
       this._resolution = resolution;
 
@@ -41,12 +39,12 @@
       this.lineVertices = [];
       this.curve = curve; // curve to read vertices from
 
-      for(let i = 0; i < this._resolution + 1; i++) {
+      for (let i = 0; i < this._resolution + 1; i++) {
         this.lineVertices[i] = new THREE.Vector3();
       }
 
       this.lineShapeVertices = [];
-      for(let i = 0; i < this._resolution + 1; i++) {
+      for (let i = 0; i < this._resolution + 1; i++) {
         var vertices = [];
         vertices[LEFT_LINE] = new THREE.Vector3();
         vertices[RIGHT_LINE] = new THREE.Vector3();
@@ -56,11 +54,11 @@
       }
 
       this.createGeometry();
-
     }
 
     createGeometry() {
-      var trianglesCount = (this.lineShapeVertices.length - 1) * (this.blur ? 6 : 2);
+      var trianglesCount =
+        (this.lineShapeVertices.length - 1) * (this.blur ? 6 : 2);
       this.geometry = new THREE.BufferGeometry();
       this.positions = new Float32Array(trianglesCount * 3 * 3);
       // this.normals = new Float32Array(trianglesCount * 3 * 3);
@@ -74,25 +72,26 @@
       // this.geometry.setAttribute('normal', normalAttribute);
       this.geometry.setAttribute('color', colorAttribute);
       this.geometry.computeBoundingSphere();
-
     }
 
     updateGeometry(filled = false) {
       // console.log('updateGeometry()');
 
-      if(this.curve !== null) {
+      if (this.curve !== null) {
         // console.log( this.curve.getPoints(this._resolution) );
         this.lineVertices = this.curve.getPoints(this._resolution);
-  			if( this.lineVertices.length > 0 && this.lineVertices[0] instanceof THREE.Vector2 ) {
-  				for(let i = 0; i < this.lineShapeVertices.length; i++) {
-  					var v = this.lineVertices[i];
-  					this.lineVertices[i] = new THREE.Vector3(v.x, v.y, 0.0);
-  				}
-  			}
-
+        if (
+          this.lineVertices.length > 0 &&
+          this.lineVertices[0] instanceof THREE.Vector2
+        ) {
+          for (let i = 0; i < this.lineShapeVertices.length; i++) {
+            var v = this.lineVertices[i];
+            this.lineVertices[i] = new THREE.Vector3(v.x, v.y, 0.0);
+          }
+        }
       }
 
-      if(this.lineVertices !== null) {
+      if (this.lineVertices !== null) {
         this.geometry.attributes.position.needsUpdate = true;
         // this.geometry.attributes.normal.needsUpdate = true;
 
@@ -100,10 +99,10 @@
 
         var lineShapeVertices = this.lineShapeVertices;
 
-        for(let i = 0; i < this.lineShapeVertices.length - 1; i++) {
+        for (let i = 0; i < this.lineShapeVertices.length - 1; i++) {
           var index = i * 3 * 3 * (this.blur ? 6 : 2);
 
-          if(filled) {
+          if (filled) {
             // lineAtoms[i].setVertices(this.lineShapeVertices[i][LEFT_LINE],
             //         lineVertices[i],
             //         lineVertices[i],
@@ -112,37 +111,108 @@
             //         lineShapeVertices[i + 1][LEFT_LINE],
             //         lineShapeVertices[i + 1][LEFT_SMOOTH_LINE],
             //         lineShapeVertices[i][LEFT_SMOOTH_LINE]);
-
           } else {
             // 6 triangles:
 
             // line
-            updatePosition(this.positions, index, lineShapeVertices[i][LEFT_LINE]);
-            updatePosition(this.positions, index + 3, lineShapeVertices[i + 1][LEFT_LINE]);
-            updatePosition(this.positions, index + 6, lineShapeVertices[i][RIGHT_LINE]);
+            updatePosition(
+              this.positions,
+              index,
+              lineShapeVertices[i][LEFT_LINE]
+            );
+            updatePosition(
+              this.positions,
+              index + 3,
+              lineShapeVertices[i + 1][LEFT_LINE]
+            );
+            updatePosition(
+              this.positions,
+              index + 6,
+              lineShapeVertices[i][RIGHT_LINE]
+            );
 
-            updatePosition(this.positions, index + 9, lineShapeVertices[i][RIGHT_LINE]);
-            updatePosition(this.positions, index + 12, lineShapeVertices[i + 1][LEFT_LINE]);
-            updatePosition(this.positions, index + 15, lineShapeVertices[i + 1][RIGHT_LINE]);
+            updatePosition(
+              this.positions,
+              index + 9,
+              lineShapeVertices[i][RIGHT_LINE]
+            );
+            updatePosition(
+              this.positions,
+              index + 12,
+              lineShapeVertices[i + 1][LEFT_LINE]
+            );
+            updatePosition(
+              this.positions,
+              index + 15,
+              lineShapeVertices[i + 1][RIGHT_LINE]
+            );
 
-            if(this.blur) {
+            if (this.blur) {
               // left blur
-              updatePosition(this.positions, index + 18, lineShapeVertices[i][LEFT_LINE]);
-              updatePosition(this.positions, index + 21, lineShapeVertices[i][LEFT_SMOOTH_LINE]);
-              updatePosition(this.positions, index + 24, lineShapeVertices[i + 1][LEFT_SMOOTH_LINE]);
+              updatePosition(
+                this.positions,
+                index + 18,
+                lineShapeVertices[i][LEFT_LINE]
+              );
+              updatePosition(
+                this.positions,
+                index + 21,
+                lineShapeVertices[i][LEFT_SMOOTH_LINE]
+              );
+              updatePosition(
+                this.positions,
+                index + 24,
+                lineShapeVertices[i + 1][LEFT_SMOOTH_LINE]
+              );
 
-              updatePosition(this.positions, index + 27, lineShapeVertices[i][LEFT_LINE]);
-              updatePosition(this.positions, index + 30, lineShapeVertices[i + 1][LEFT_SMOOTH_LINE]);
-              updatePosition(this.positions, index + 33, lineShapeVertices[i + 1][LEFT_LINE]);
+              updatePosition(
+                this.positions,
+                index + 27,
+                lineShapeVertices[i][LEFT_LINE]
+              );
+              updatePosition(
+                this.positions,
+                index + 30,
+                lineShapeVertices[i + 1][LEFT_SMOOTH_LINE]
+              );
+              updatePosition(
+                this.positions,
+                index + 33,
+                lineShapeVertices[i + 1][LEFT_LINE]
+              );
 
               // right blur
-              updatePosition(this.positions, index + 36, lineShapeVertices[i][RIGHT_LINE]);
-              updatePosition(this.positions, index + 39, lineShapeVertices[i + 1][RIGHT_LINE]);
-              updatePosition(this.positions, index + 42, lineShapeVertices[i][RIGHT_SMOOTH_LINE]);
+              updatePosition(
+                this.positions,
+                index + 36,
+                lineShapeVertices[i][RIGHT_LINE]
+              );
+              updatePosition(
+                this.positions,
+                index + 39,
+                lineShapeVertices[i + 1][RIGHT_LINE]
+              );
+              updatePosition(
+                this.positions,
+                index + 42,
+                lineShapeVertices[i][RIGHT_SMOOTH_LINE]
+              );
 
-              updatePosition(this.positions, index + 45, lineShapeVertices[i][RIGHT_SMOOTH_LINE]);
-              updatePosition(this.positions, index + 48, lineShapeVertices[i + 1][RIGHT_LINE]);
-              updatePosition(this.positions, index + 51, lineShapeVertices[i + 1][RIGHT_SMOOTH_LINE]);
+              updatePosition(
+                this.positions,
+                index + 45,
+                lineShapeVertices[i][RIGHT_SMOOTH_LINE]
+              );
+              updatePosition(
+                this.positions,
+                index + 48,
+                lineShapeVertices[i + 1][RIGHT_LINE]
+              );
+              updatePosition(
+                this.positions,
+                index + 51,
+                lineShapeVertices[i + 1][RIGHT_SMOOTH_LINE]
+              );
             }
 
             // flat face normals
@@ -170,22 +240,19 @@
             //     }
             //   }
             // }
-
           }
-
         }
 
         this.updateColors();
 
         // this.geometry.computeBoundingSphere();
-
       }
     }
 
     updateColors() {
       this.geometry.attributes.color.needsUpdate = true;
 
-      for(let i = 0; i < this.lineShapeVertices.length - 1; i++) {
+      for (let i = 0; i < this.lineShapeVertices.length - 1; i++) {
         var index = i * 3 * 4 * (this.blur ? 6 : 2);
 
         var c = this._getColor(i / (this._resolution - 1));
@@ -199,7 +266,7 @@
         updateColor(this.vertexColors, index + 16, c);
         updateColor(this.vertexColors, index + 20, c);
 
-        if(this.blur) {
+        if (this.blur) {
           // left blur
           updateColor(this.vertexColors, index + 24, c);
           updateColor(this.vertexColors, index + 28, c, 0);
@@ -218,13 +285,12 @@
           updateColor(this.vertexColors, index + 64, c);
           updateColor(this.vertexColors, index + 68, c, 0);
         }
-
       }
     }
 
     getLength() {
       let l = 0.0;
-      for(let i = 0; i < this.lineVertices.length - 1; i++) {
+      for (let i = 0; i < this.lineVertices.length - 1; i++) {
         l += this.lineVertices[i].distanceTo(this.lineVertices[i + 1]);
       }
       return l;
@@ -243,23 +309,23 @@
 
       var lineVertices = this.lineVertices;
 
-      for(let i = 0; i < this._resolution; i++) {
+      for (let i = 0; i < this._resolution; i++) {
         this.lineShapeVertices[i][LEFT_LINE].copy(lineVertices[i]);
         this.lineShapeVertices[i][RIGHT_LINE].copy(lineVertices[i]);
 
-        if(this.blur) {
+        if (this.blur) {
           this.lineShapeVertices[i][LEFT_SMOOTH_LINE].copy(lineVertices[i]);
           this.lineShapeVertices[i][RIGHT_SMOOTH_LINE].copy(lineVertices[i]);
         }
 
         // previous point to current point ---------------------------------
         distancePrevious = 0.0;
-        if(i > 0) {
+        if (i > 0) {
           vectorPrevious.copy(lineVertices[i - 1]);
           vectorPrevious.sub(lineVertices[i]);
           distancePrevious = vectorPrevious.length();
         } else {
-          if(this.closed) {
+          if (this.closed) {
             vectorPrevious.copy(lineVertices[lineVertices.length - 1]);
             vectorPrevious.sub(lineVertices[i]);
             distancePrevious = vectorPrevious.length();
@@ -267,7 +333,7 @@
             vectorPrevious.copy(0, 0, 0);
           }
         }
-        if(distancePrevious > 0.0) {
+        if (distancePrevious > 0.0) {
           vectorPrevious.multiplyScalar(1.0 / distancePrevious); // normalize
         }
 
@@ -276,20 +342,20 @@
         vectorCurrent.sub(lineVertices[i]);
         distanceCurrent = vectorCurrent.length();
 
-        if(distanceCurrent > 0.0) {
+        if (distanceCurrent > 0.0) {
           vectorCurrent.multiplyScalar(1.0 / distanceCurrent); // normalize
         }
 
-        if(this.angleBisection) {
+        if (this.angleBisection) {
           // calcuate angle bisection (good for 2d):
           vectorSide.copy(vectorCurrent);
           vectorSide.add(vectorPrevious);
 
-          if((distanceCurrent === 0 && distancePrevious === 0) || i === 0) {
-            if(distanceCurrent === 0) {
+          if ((distanceCurrent === 0 && distancePrevious === 0) || i === 0) {
+            if (distanceCurrent === 0) {
               vectorCurrent.set(1, 0, 0);
             }
-            if(this.closed) {
+            if (this.closed) {
               vectorSide.copy(lineVertices[lineVertices.length - 1]);
               vectorSide.sub(lineVertices[0]);
             } else {
@@ -298,37 +364,42 @@
             }
 
             vectorSide.set(-vectorSide.y, vectorSide.x, vectorSide.z);
-
           } else {
             // generate sideVector from upVector, if the sideVector could not be calculated from angle-bisection
-            if(vectorSide.lengthSq() < 0.0001) {
+            if (vectorSide.lengthSq() < 0.0001) {
               vectorSide.copy(this.upVector);
               vectorSide.cross(vectorCurrent);
             }
 
             vectorSidePrevious.copy(this.lineShapeVertices[i - 1][LEFT_LINE]);
             vectorSidePrevious.sub(lineVertices[i - 1]);
-            if(vectorSide.dot(vectorSidePrevious) < 0) {
+            if (vectorSide.dot(vectorSidePrevious) < 0) {
               vectorSide.negate();
             }
           }
-
         } else {
-        	this.calculateSideVector(vectorSide, vectorCurrent, vectorSidePrevious);
-
+          this.calculateSideVector(
+            vectorSide,
+            vectorCurrent,
+            vectorSidePrevious
+          );
         }
 
         vectorSide.normalize();
         vectorSideCopy.copy(vectorSide);
 
-        vectorSide.multiplyScalar(this._getLineWidth(i / this._resolution) / 2.0);
+        vectorSide.multiplyScalar(
+          this._getLineWidth(i / this._resolution) / 2.0
+        );
 
         this.lineShapeVertices[i][LEFT_LINE].add(vectorSide);
         this.lineShapeVertices[i][RIGHT_LINE].sub(vectorSide);
 
-        if(this.blur) {
+        if (this.blur) {
           const p = i / this._resolution;
-          vectorSideCopy.multiplyScalar(this._getLineWidth(p) / 2.0 + this._getBlurWidth(p));
+          vectorSideCopy.multiplyScalar(
+            this._getLineWidth(p) / 2.0 + this._getBlurWidth(p)
+          );
 
           this.lineShapeVertices[i][LEFT_SMOOTH_LINE].add(vectorSideCopy);
           this.lineShapeVertices[i][RIGHT_SMOOTH_LINE].sub(vectorSideCopy);
@@ -336,37 +407,45 @@
       }
 
       // add the end point ===================================================
-      this.lineShapeVertices[this._resolution][LEFT_LINE].copy(lineVertices[this._resolution]);
-      this.lineShapeVertices[this._resolution][RIGHT_LINE].copy(lineVertices[this._resolution]);
+      this.lineShapeVertices[this._resolution][LEFT_LINE].copy(
+        lineVertices[this._resolution]
+      );
+      this.lineShapeVertices[this._resolution][RIGHT_LINE].copy(
+        lineVertices[this._resolution]
+      );
 
-      if(this.blur) {
-        this.lineShapeVertices[this._resolution][LEFT_SMOOTH_LINE].copy(lineVertices[this._resolution]);
-        this.lineShapeVertices[this._resolution][RIGHT_SMOOTH_LINE].copy(lineVertices[this._resolution]);
+      if (this.blur) {
+        this.lineShapeVertices[this._resolution][LEFT_SMOOTH_LINE].copy(
+          lineVertices[this._resolution]
+        );
+        this.lineShapeVertices[this._resolution][RIGHT_SMOOTH_LINE].copy(
+          lineVertices[this._resolution]
+        );
       }
 
       // current point to next point -----------------------------------------
       vectorCurrent.copy(lineVertices[this._resolution]);
       vectorCurrent.sub(lineVertices[this._resolution - 1]);
       distanceCurrent = vectorCurrent.length();
-      if(distanceCurrent > 0) {
+      if (distanceCurrent > 0) {
         vectorCurrent.multiplyScalar(1.0 / distanceCurrent); // normalize
       }
 
-      if(this.angleBisection) {
+      if (this.angleBisection) {
         // calcuate angle bisection (good for 2d):
 
         vectorSide.copy(vectorCurrent);
         vectorSide.set(-vectorSide.y, vectorSide.x, vectorSide.z);
 
-        vectorSidePrevious.copy(this.lineShapeVertices[this._resolution - 1][LEFT_LINE]);
+        vectorSidePrevious.copy(
+          this.lineShapeVertices[this._resolution - 1][LEFT_LINE]
+        );
         vectorSidePrevious.sub(lineVertices[this._resolution - 1]);
-        if(vectorSide.dot(vectorSidePrevious) < 0) {
+        if (vectorSide.dot(vectorSidePrevious) < 0) {
           vectorSide.negate();
         }
-
       } else {
         this.calculateSideVector(vectorSide, vectorCurrent, vectorSidePrevious);
-
       }
 
       vectorSide.normalize();
@@ -377,22 +456,35 @@
       this.lineShapeVertices[this._resolution][LEFT_LINE].add(vectorSide);
       this.lineShapeVertices[this._resolution][RIGHT_LINE].sub(vectorSide);
 
-      if(this.blur) {
-        vectorSideCopy.multiplyScalar(this._getLineWidth(1) / 2.0 + this._getBlurWidth(1));
+      if (this.blur) {
+        vectorSideCopy.multiplyScalar(
+          this._getLineWidth(1) / 2.0 + this._getBlurWidth(1)
+        );
 
-        this.lineShapeVertices[this._resolution][LEFT_SMOOTH_LINE].add(vectorSideCopy);
-        this.lineShapeVertices[this._resolution][RIGHT_SMOOTH_LINE].sub(vectorSideCopy);
+        this.lineShapeVertices[this._resolution][LEFT_SMOOTH_LINE].add(
+          vectorSideCopy
+        );
+        this.lineShapeVertices[this._resolution][RIGHT_SMOOTH_LINE].sub(
+          vectorSideCopy
+        );
       }
 
-  		if(this.closed) {
-  			// this.lineShapeVertices[this._resolution] = this.lineShapeVertices[0];
+      if (this.closed) {
+        // this.lineShapeVertices[this._resolution] = this.lineShapeVertices[0];
 
-  			this.lineShapeVertices[this._resolution][LEFT_LINE].copy(this.lineShapeVertices[0][LEFT_LINE]);
-  			this.lineShapeVertices[this._resolution][RIGHT_LINE].copy(this.lineShapeVertices[0][RIGHT_LINE]);
-  			this.lineShapeVertices[this._resolution][LEFT_SMOOTH_LINE].copy(this.lineShapeVertices[0][LEFT_SMOOTH_LINE]);
-  			this.lineShapeVertices[this._resolution][RIGHT_SMOOTH_LINE].copy(this.lineShapeVertices[0][RIGHT_SMOOTH_LINE]);
-  		}
-
+        this.lineShapeVertices[this._resolution][LEFT_LINE].copy(
+          this.lineShapeVertices[0][LEFT_LINE]
+        );
+        this.lineShapeVertices[this._resolution][RIGHT_LINE].copy(
+          this.lineShapeVertices[0][RIGHT_LINE]
+        );
+        this.lineShapeVertices[this._resolution][LEFT_SMOOTH_LINE].copy(
+          this.lineShapeVertices[0][LEFT_SMOOTH_LINE]
+        );
+        this.lineShapeVertices[this._resolution][RIGHT_SMOOTH_LINE].copy(
+          this.lineShapeVertices[0][RIGHT_SMOOTH_LINE]
+        );
+      }
     }
 
     calculateSideVector(vectorSide, vectorCurrent, vectorSidePrevious) {
@@ -404,13 +496,12 @@
       // }
       vectorSide.cross(this.upVector);
       // vectorSide.lerp(vectorSidePrevious, 0.95);
-      if(vectorSide.lengthSq() < 0.01) {
+      if (vectorSide.lengthSq() < 0.01) {
         // use previous side vector, if current side vector is too short:
         vectorSide.copy(vectorSidePrevious);
       }
 
       vectorSidePrevious.copy(vectorSide);
-
     }
 
     getInterpolatedPoint(pos) {
@@ -421,14 +512,14 @@
 
       var totalLength = this.length();
       let currentLength = 0.0;
-      for(let i = 0; i < this.lineVertices.length - 1; i++) {
+      for (let i = 0; i < this.lineVertices.length - 1; i++) {
         let l = this.lineVertices[i].distanceTo(this.lineVertices[i + 1]);
         currentLength += l;
-        if(currentLength / totalLength > pos) {
+        if (currentLength / totalLength > pos) {
           startIndex = i;
 
           let x = pos * totalLength;
-          let xStart = (currentLength - l);
+          let xStart = currentLength - l;
           let xEnd = currentLength;
 
           delta = (x - xStart) / (xEnd - xStart);
@@ -439,7 +530,7 @@
 
       var point = new THREE.Vector3();
 
-      if(startIndex < this.lineVertices.length - 1) {
+      if (startIndex < this.lineVertices.length - 1) {
         point.copy(this.lineVertices[startIndex]);
         point.lerp(this.lineVertices[startIndex + 1], delta);
       }
@@ -447,7 +538,7 @@
     }
 
     _getLineWidth(p) {
-      if(this.lineWidthModifier) {
+      if (this.lineWidthModifier) {
         return this.lineWidth * this.lineWidthModifier(p);
       } else {
         return this.lineWidth;
@@ -455,7 +546,7 @@
     }
 
     _getBlurWidth(p) {
-      if(this.blurWidthModifier) {
+      if (this.blurWidthModifier) {
         return this.blurWidth * this.blurWidthModifier(p);
       } else {
         return this.blurWidth;
@@ -463,7 +554,7 @@
     }
 
     _getColor(p) {
-      if(this.colorModifier) {
+      if (this.colorModifier) {
         return this.color.clone().multiply(this.colorModifier(p));
       } else {
         return this.color;
@@ -473,7 +564,6 @@
     toString() {
       return 'BlurredLine';
     }
-
   }
 
   function updatePosition(positions, index, point) {
@@ -489,25 +579,24 @@
     colors[index + 3] = alpha;
   }
 
-
   class BlurredLineMaterial extends THREE.RawShaderMaterial {
     constructor(parameters) {
       super();
 
-      if(!parameters) {
+      if (!parameters) {
         parameters = {
           depthTest: false,
           side: THREE.DoubleSide,
           transparent: true,
         };
       } else {
-        if(parameters.depthTest === undefined) parameters.depthTest = false;
-        if(parameters.side === undefined) parameters.side = THREE.DoubleSide;
-        if(parameters.transparent === undefined) parameters.transparent = true;
+        if (parameters.depthTest === undefined) parameters.depthTest = false;
+        if (parameters.side === undefined) parameters.side = THREE.DoubleSide;
+        if (parameters.transparent === undefined) parameters.transparent = true;
       }
 
       this.uniforms = {
-        materialColor: { value: new THREE.Color( 0xffffff ) },
+        materialColor: { value: new THREE.Color(0xffffff) },
         opacity: { value: 1.0 },
       };
 
@@ -563,54 +652,51 @@
 
       this.type = 'BlurredLineMaterial';
 
-      Object.defineProperties( this, {
+      Object.defineProperties(this, {
         color: {
-    			enumerable: true,
-    			get: function() {
-    				return this.uniforms.materialColor.value;
-    			},
-    			set: function(value) {
-    				this.uniforms.materialColor.value = value;
-    			}
-    		},
-    		opacity: {
-    			enumerable: true,
-    			get: function() {
-    				return this.uniforms.opacity.value;
-    			},
-    			set: function(value) {
-    				this.uniforms.opacity.value = value;
-    			}
-    		},
-    	});
+          enumerable: true,
+          get: function () {
+            return this.uniforms.materialColor.value;
+          },
+          set: function (value) {
+            this.uniforms.materialColor.value = value;
+          },
+        },
+        opacity: {
+          enumerable: true,
+          get: function () {
+            return this.uniforms.opacity.value;
+          },
+          set: function (value) {
+            this.uniforms.opacity.value = value;
+          },
+        },
+      });
 
-    	this.setValues(parameters);
-
+      this.setValues(parameters);
     }
 
     copy(source) {
+      THREE.ShaderMaterial.prototype.copy.call(this, source);
 
-      THREE.ShaderMaterial.prototype.copy.call( this, source );
-
-      this.color.copy( source.color );
+      this.color.copy(source.color);
       this.opacity = source.opacity;
 
       return this;
-
     }
-
   }
 
-  if( typeof exports !== 'undefined' ) {
-  	if( typeof module !== 'undefined' && module.exports ) {
-  		exports = module.exports = { BlurredLine: BlurredLine, BlurredLineMaterial: BlurredLineMaterial };
-  	}
-  	exports.BlurredLine = BlurredLine;
+  if (typeof exports !== 'undefined') {
+    if (typeof module !== 'undefined' && module.exports) {
+      exports = module.exports = {
+        BlurredLine: BlurredLine,
+        BlurredLineMaterial: BlurredLineMaterial,
+      };
+    }
+    exports.BlurredLine = BlurredLine;
     exports.BlurredLineMaterial = BlurredLineMaterial;
-
   } else {
-  	root.BlurredLine = BlurredLine;
+    root.BlurredLine = BlurredLine;
     root.BlurredLineMaterial = BlurredLineMaterial;
   }
-
-}).call(this);
+}.call(this));
