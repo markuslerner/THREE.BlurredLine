@@ -11,9 +11,9 @@ It is useful not only for drawing wide soft lines, but also extreme thin lines n
 
 ### Examples ####
 
-* [Demo](https://www.markuslerner.com/github/three.blurredline/examples/index.html): Showcase of most of the features
-* [Simple](https://www.markuslerner.com/github/three.blurredline/examples/simple.html): Simple Example
-* [Modifiers](https://www.markuslerner.com/github/three.blurredline/examples/modifiers.html): Using modifier functions to draw varying line widths, blur widths and colors
+* [Demo](https://dev.markuslerner.com/three.blurredline/examples/index.html): Showcase of most of the features
+* [Simple](https://dev.markuslerner.com/three.blurredline/examples/simple.html): Simple Example
+* [Modifiers](https://dev.markuslerner.com/three.blurredline/examples/modifiers.html): Using modifier functions to draw varying line widths, blur widths and colors
 
 ### Usage ####
 
