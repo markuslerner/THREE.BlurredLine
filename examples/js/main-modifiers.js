@@ -6,50 +6,49 @@ init();
 animate();
 
 function init() {
+  container = document.getElementById('container');
 
-  container = document.getElementById( 'container' );
-
-  camera = new THREE.OrthographicCamera( window.innerWidth / - 2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / - 2, 1, 1000 );
-  camera.position.set( 0, 0, 500 );
+  camera = new THREE.OrthographicCamera(
+    window.innerWidth / -2,
+    window.innerWidth / 2,
+    window.innerHeight / 2,
+    window.innerHeight / -2,
+    1,
+    1000
+  );
+  camera.position.set(0, 0, 500);
 
   scene = new THREE.Scene();
 
   renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-  renderer.setPixelRatio( window.devicePixelRatio );
-  renderer.setSize( window.innerWidth, window.innerHeight );
-  container.appendChild( renderer.domElement );
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  container.appendChild(renderer.domElement);
 
-  window.addEventListener( 'resize', onWindowResize, false );
+  window.addEventListener('resize', onWindowResize, false);
 
   createLine();
-
 }
 
 function onWindowResize() {
-
-  camera.left   = window.innerWidth / - 2;
-  camera.right  = window.innerWidth / 2;
-  camera.top    = window.innerHeight / 2;
-  camera.bottom = window.innerHeight / - 2;
+  camera.left = window.innerWidth / -2;
+  camera.right = window.innerWidth / 2;
+  camera.top = window.innerHeight / 2;
+  camera.bottom = window.innerHeight / -2;
 
   camera.updateProjectionMatrix();
 
-  renderer.setSize( window.innerWidth, window.innerHeight );
-
+  renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
 function animate() {
-
-  requestAnimationFrame( animate );
+  requestAnimationFrame(animate);
 
   render();
-
 }
 
 function render() {
-
-  renderer.render( scene, camera );
-
+  renderer.render(scene, camera);
 }
 
 function createLine() {
@@ -57,7 +56,7 @@ function createLine() {
     new THREE.Vector3(-200, -100, 0),
     new THREE.Vector3(0, -100, 0),
     new THREE.Vector3(0, 100, 0),
-    new THREE.Vector3(200, 100, 0),
+    new THREE.Vector3(200, 100, 0)
   );
 
   const material = new BlurredLineMaterial({
@@ -66,7 +65,7 @@ function createLine() {
   });
 
   const easeSineInOut = (p) => {
-    return 0.5 * ( 1 - Math.cos( Math.PI * p ) );
+    return 0.5 * (1 - Math.cos(Math.PI * p));
   };
 
   const colorStart = new THREE.Color(0x000000);
@@ -86,5 +85,4 @@ function createLine() {
   line.colorModifier = colorModifier;
   line.updateGeometry();
   scene.add(line);
-
 }
