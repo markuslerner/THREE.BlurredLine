@@ -96,7 +96,7 @@ function init() {
     blending: THREE.NormalBlending,
   });
 
-  handlesGeometry = new THREE.Geometry();
+  handlesGeometry = new THREE.BufferGeometry();
   if (curve instanceof THREE.CubicBezierCurve3) {
     handlesGeometry.vertices.push(curve.v0, curve.v1, curve.v2, curve.v3);
   }
