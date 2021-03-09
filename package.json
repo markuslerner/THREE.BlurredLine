@@ -1,6 +1,6 @@
 {
   "name": "three.blurredline",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Drawing smooth blurred lines in THREE.js",
   "main": "src/BlurredLine.js",
   "scripts": {
@@ -29,10 +29,10 @@
   "homepage": "https://github.com/markuslerner/THREE.BlurredLine#readme",
   "devDependencies": {
     "babel-eslint": "^10.1.0",
-    "eslint": "^7.12.1",
+    "eslint": "^7.21.0",
     "eslint-plugin-babel": "^5.3.1"
   },
   "dependencies": {
-    "three": "^0.125.0"
+    "three": "^0.126.1"
   }
 }
