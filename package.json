@@ -29,10 +29,10 @@
   "homepage": "https://github.com/markuslerner/THREE.BlurredLine#readme",
   "devDependencies": {
     "babel-eslint": "^10.1.0",
-    "eslint": "^7.21.0",
+    "eslint": "^8.1.0",
     "eslint-plugin-babel": "^5.3.1"
   },
   "dependencies": {
-    "three": "^0.126.1"
+    "three": "^0.134.0"
   }
 }
