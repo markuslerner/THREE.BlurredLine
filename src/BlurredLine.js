@@ -24,8 +24,6 @@
       this.lineWidth = 1.0;
       this.blurWidth = 1.0;
       this.blur = true;
-      this.blurStartCap = false;
-      this.blurEndCap = false;
       this.color = new THREE.Color();
 
       this.upVector = new THREE.Vector3(0.0, 0.0, 1.0);
@@ -288,21 +286,6 @@
           updateColor(this.vertexColors, index + 68, c, 0);
         }
       }
-
-      if (!this.closed && this.blur && this.blurEndCap) {
-        var i = this.lineShapeVertices.length - 2;
-        var index = i * 3 * 4 * (this.blur ? 6 : 2);
-        var c = this._getColor(i / (this._resolution - 1));
-
-        updateColor(this.vertexColors, index + 4, c, 0);
-        updateColor(this.vertexColors, index + 16, c, 0);
-        updateColor(this.vertexColors, index + 20, c, 0);
-
-        updateColor(this.vertexColors, index + 44, c, 0);
-
-        updateColor(this.vertexColors, index + 52, c, 0);
-        updateColor(this.vertexColors, index + 64, c, 0);
-      }
     }
 
     getLength() {
@@ -500,38 +483,6 @@
         );
         this.lineShapeVertices[this._resolution][RIGHT_SMOOTH_LINE].copy(
           this.lineShapeVertices[0][RIGHT_SMOOTH_LINE]
-        );
-      }
-
-      if (!this.closed && this.blur && this.blurStartCap) {
-      }
-
-      if (!this.closed && this.blur && this.blurEndCap) {
-        this.lineShapeVertices[this._resolution][LEFT_LINE].copy(
-          this.lineShapeVertices[this._resolution - 1][LEFT_LINE]
-        );
-        // @TODO: check, if res is high enough:
-        this.lineShapeVertices[this._resolution][LEFT_LINE].sub(
-          this.lineShapeVertices[this._resolution - 2][LEFT_LINE]
-        );
-        this.lineShapeVertices[this._resolution][LEFT_LINE].setLength(
-          this.blurWidth
-        );
-        this.lineShapeVertices[this._resolution][LEFT_LINE].add(
-          this.lineShapeVertices[this._resolution - 1][LEFT_LINE]
-        );
-
-        this.lineShapeVertices[this._resolution][RIGHT_LINE].copy(
-          this.lineShapeVertices[this._resolution - 1][RIGHT_LINE]
-        );
-        this.lineShapeVertices[this._resolution][RIGHT_LINE].sub(
-          this.lineShapeVertices[this._resolution - 2][RIGHT_LINE]
-        );
-        this.lineShapeVertices[this._resolution][RIGHT_LINE].setLength(
-          this.blurWidth
-        );
-        this.lineShapeVertices[this._resolution][RIGHT_LINE].add(
-          this.lineShapeVertices[this._resolution - 1][RIGHT_LINE]
         );
       }
     }

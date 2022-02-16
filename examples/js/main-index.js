@@ -17,11 +17,9 @@ var Params = function () {
   this.angleBisection = false;
   this.closed = false;
   this.color = '#000000';
-  this.lineWidth = 30;
-  this.blurWidth = 60;
+  this.lineWidth = 1;
+  this.blurWidth = 10;
   this.blur = true;
-  this.blurStartCap = true;
-  this.blurEndCap = true;
   this.opacity = 1.0;
   this.wireframe = false;
   this.autoRotate = false;
@@ -64,9 +62,9 @@ function init() {
   curves.path.lineTo(0, 500);
 
   curves.bezier = new THREE.CubicBezierCurve3(
-    new THREE.Vector3(-500, 0, 0),
-    new THREE.Vector3(0, 0, 0),
-    new THREE.Vector3(0, 0, 0),
+    new THREE.Vector3(-500, 0, -500),
+    new THREE.Vector3(0, 0, 500),
+    new THREE.Vector3(0, 300, 500),
     endPoint
   );
 
@@ -166,8 +164,6 @@ function init() {
       });
     });
     gui.add(params, 'blur').onChange(update);
-    gui.add(params, 'blurStartCap').onChange(update);
-    gui.add(params, 'blurEndCap').onChange(update);
     gui.add(params, 'opacity', 0.0, 1.0).onChange(function () {
       lineMaterial.opacity = params.opacity;
     });
@@ -251,8 +247,6 @@ function createLine(i) {
   line.lineWidth = params.lineWidth;
   line.blurWidth = params.blurWidth;
   line.blur = params.blur;
-  line.blurStartCap = params.blurStartCap;
-  line.blurEndCap = params.blurEndCap;
   line.angleBisection = params.angleBisection;
   line.upVector = new THREE.Vector3(0.0, 0.0, 1.0);
   line.closed = params.closed;
