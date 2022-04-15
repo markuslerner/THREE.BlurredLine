@@ -123,7 +123,11 @@
           return new THREE.Color().copy(colorStart).lerp(colorEnd, p);
         };
 
-        const line = new BlurredLine(curve, material, 50);
+        const opacityModifier = (p) => {
+          return 1 - Math.sin(p * Math.PI);
+        };
+
+        const line = new BlurredLine(curve, material, 100);
         line.lineWidth = 20.0;
         line.lineWidthModifier = easeSineInOut;
         line.blurWidth = 20.0;
@@ -131,6 +135,7 @@
         line.blur = true;
         line.color = new THREE.Color(0xffffff);
         line.colorModifier = colorModifier;
+        line.opacityModifier = opacityModifier;
         line.updateGeometry();
         scene.add(line);
       }

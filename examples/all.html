@@ -66,13 +66,17 @@
       const Params = function () {
         this.curve = 'bezier';
         this.amount = 1;
-        this.resolution = 50;
+        this.resolution = 100;
         this.angleBisection = false;
         this.closed = false;
-        this.color = '#000000';
-        this.lineWidth = 1;
-        this.blurWidth = 10;
+        this.color = '#ff0000';
+        this.lineWidth = 10;
+        this.blurWidth = 20;
         this.blur = true;
+        this.lineWidthModifier = false;
+        this.blurWidthModifier = false;
+        this.opacityModifier = false;
+        this.colorModifier = false;
         this.opacity = 1.0;
         this.wireframe = false;
         this.autoRotate = false;
@@ -111,9 +115,9 @@
       curves.path.lineTo(0, 500);
 
       curves.bezier = new THREE.CubicBezierCurve3(
-        new THREE.Vector3(-500, 0, -500),
-        new THREE.Vector3(0, 0, 500),
-        new THREE.Vector3(0, 300, 500),
+        new THREE.Vector3(-500, 0, 0),
+        new THREE.Vector3(0, 0, 0),
+        new THREE.Vector3(0, 0, 0),
         endPoint
       );
 
@@ -157,6 +161,15 @@
       // const handles = new THREE.Line(handlesGeometry, handlesMaterial);
       // scene.add(handles);
 
+      const easeSineInOut = (p) => {
+        return 0.5 * (1 - Math.cos(Math.PI * p));
+      };
+      const colorModifier = (p) => {
+        return new THREE.Color()
+          .copy(new THREE.Color(0x000000))
+          .lerp(new THREE.Color(params.color), p);
+      };
+
       params = new Params();
       const gui = new GUI();
 
@@ -177,8 +190,8 @@
               l.updateGeometry();
             });
           });
-        gui.add(params, 'amount', 1, 1000).onChange(update);
-        gui.add(params, 'resolution', 1, 100).onChange(update);
+        gui.add(params, 'amount', 1, 1000, 1).onChange(update);
+        gui.add(params, 'resolution', 1, 200).onChange(update);
         gui.add(params, 'angleBisection').onChange(function () {
           lines.forEach(function (l) {
             l.angleBisection = params.angleBisection;
@@ -209,6 +222,30 @@
           });
         });
         gui.add(params, 'blur').onChange(update);
+        gui.add(params, 'lineWidthModifier').onChange(function () {
+          lines.forEach(function (l) {
+            l.lineWidthModifier = params.lineWidthModifier && easeSineInOut;
+            l.updateGeometry();
+          });
+        });
+        gui.add(params, 'blurWidthModifier').onChange(function () {
+          lines.forEach(function (l) {
+            l.blurWidthModifier = params.blurWidthModifier && easeSineInOut;
+            l.updateGeometry();
+          });
+        });
+        gui.add(params, 'opacityModifier').onChange(function () {
+          lines.forEach(function (l) {
+            l.opacityModifier = params.opacityModifier && easeSineInOut;
+            l.updateGeometry();
+          });
+        });
+        gui.add(params, 'colorModifier').onChange(function () {
+          lines.forEach(function (l) {
+            l.colorModifier = params.colorModifier && colorModifier;
+            l.updateGeometry();
+          });
+        });
         gui.add(params, 'opacity', 0.0, 1.0).onChange(function () {
           lineMaterial.opacity = params.opacity;
         });
@@ -298,6 +335,10 @@
         line.lineWidth = params.lineWidth;
         line.blurWidth = params.blurWidth;
         line.blur = params.blur;
+        line.lineWidthModifier = params.lineWidthModifier && easeSineInOut;
+        line.blurWidthModifier = params.blurWidthModifier && easeSineInOut;
+        line.opacityModifier = params.opacityModifier && easeSineInOut;
+        line.colorModifier = params.colorModifier && colorModifier;
         line.angleBisection = params.angleBisection;
         line.upVector = new THREE.Vector3(0.0, 0.0, 1.0);
         line.closed = params.closed;
