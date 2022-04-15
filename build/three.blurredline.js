@@ -43,4 +43,4 @@ import{BufferGeometry as w,BufferAttribute as V,Color as m,DoubleSide as _,Mesh 
 
         }
       `,this.type="BlurredLineMaterial",Object.defineProperties(this,{color:{enumerable:!0,get:function(){return this.uniforms.materialColor.value},set:function(e){this.uniforms.materialColor.value=e}},opacity:{enumerable:!0,get:function(){return this.uniforms.opacity.value},set:function(e){this.uniforms.opacity.value=e}}}),this.setValues(i)}copy(i){return M.prototype.copy.call(this,i),this.color.copy(i.color),this.opacity=i.opacity,this}};export{b as BlurredLine,C as BlurredLineMaterial};
-//# sourceMappingURL=three.interactive.js.map
+//# sourceMappingURL=three.blurredline.js.map

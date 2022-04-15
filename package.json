@@ -6,7 +6,7 @@
   "module": "./build/three.blurredline.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "esbuild src/index.js --bundle --minify --format=esm --sourcemap --external:three --outfile=build/three.interactive.js",
+    "build": "esbuild src/index.js --bundle --minify --format=esm --sourcemap --external:three --outfile=build/three.blurredline.js",
     "lint": "eslint src/** --ext .js",
     "examples": "ws"
   },
