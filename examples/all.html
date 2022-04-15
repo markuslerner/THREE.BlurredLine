@@ -226,6 +226,10 @@
       container.appendChild(renderer.domElement);
 
       stats = new Stats();
+      stats.dom.style.left = 'auto';
+      stats.dom.style.right = '0';
+      stats.dom.style.top = 'auto';
+      stats.dom.style.bottom = '0';
       container.appendChild(stats.dom);
 
       clock = new THREE.Clock();
