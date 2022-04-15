@@ -1,10 +1,14 @@
 {
   "name": "three.blurredline",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "Drawing smooth blurred lines in THREE.js",
-  "main": "src/BlurredLine.js",
+  "type": "module",
+  "module": "./build/three.blurredline.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "esbuild src/index.js --bundle --minify --format=esm --sourcemap --external:three --outfile=build/three.interactive.js",
+    "lint": "eslint src/** --ext .js",
+    "examples": "ws"
   },
   "repository": {
     "type": "git",
@@ -19,7 +23,8 @@
   "files": [
     "LICENSE",
     "README.md",
-    "src/BlurredLine.js"
+    "build",
+    "src"
   ],
   "author": "Markus Lerner <m@markuslerner.com> (https://www.markuslerner.com)",
   "license": "MIT",
@@ -28,11 +33,12 @@
   },
   "homepage": "https://github.com/markuslerner/THREE.BlurredLine#readme",
   "devDependencies": {
-    "babel-eslint": "^10.1.0",
-    "eslint": "^8.1.0",
-    "eslint-plugin-babel": "^5.3.1"
+    "esbuild": "^0.14.23",
+    "eslint": "^8.10.0",
+    "eslint-config-prettier": "^8.4.0",
+    "local-web-server": "^5.1.1"
   },
-  "dependencies": {
-    "three": "^0.137.5"
+  "peerDependencies": {
+    "three": "^0.139.2"
   }
 }
