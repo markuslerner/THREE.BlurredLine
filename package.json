@@ -1,8 +1,9 @@
 {
   "name": "three.blurredline",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Drawing smooth blurred lines in THREE.js",
   "type": "module",
+  "main": "./build/three.blurredline.js",
   "module": "./build/three.blurredline.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -21,9 +22,12 @@
     "blur"
   ],
   "files": [
+    "build/three.blurredline.js",
+    "build/three.blurredline.js.map",
+    "examples",
     "LICENSE",
+    "package.json",
     "README.md",
-    "build",
     "src"
   ],
   "author": "Markus Lerner <m@markuslerner.com> (https://www.markuslerner.com)",
