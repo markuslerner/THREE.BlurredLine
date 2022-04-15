@@ -27,6 +27,7 @@ export class BlurredLine extends Mesh {
     this.blurWidth = 1.0;
     this.blur = true;
     this.color = new Color();
+    this.opacity = 1.0;
 
     this.upVector = new Vector3(0.0, 0.0, 1.0);
 
@@ -257,34 +258,36 @@ export class BlurredLine extends Mesh {
     for (let i = 0; i < this.lineShapeVertices.length - 1; i++) {
       var index = i * 3 * 4 * (this.blur ? 6 : 2);
 
-      var c = this._getColor(i / (this._resolution - 1));
+      const p = i / (this._resolution - 1);
+      var c = this._getColor(p);
+      var o = this._getOpacity(p);
 
       // line
-      updateColor(this.vertexColors, index, c);
-      updateColor(this.vertexColors, index + 4, c);
-      updateColor(this.vertexColors, index + 8, c);
+      updateColor(this.vertexColors, index, c, o);
+      updateColor(this.vertexColors, index + 4, c, o);
+      updateColor(this.vertexColors, index + 8, c, o);
 
-      updateColor(this.vertexColors, index + 12, c);
-      updateColor(this.vertexColors, index + 16, c);
-      updateColor(this.vertexColors, index + 20, c);
+      updateColor(this.vertexColors, index + 12, c, o);
+      updateColor(this.vertexColors, index + 16, c, o);
+      updateColor(this.vertexColors, index + 20, c, o);
 
       if (this.blur) {
         // left blur
-        updateColor(this.vertexColors, index + 24, c);
+        updateColor(this.vertexColors, index + 24, c, o);
         updateColor(this.vertexColors, index + 28, c, 0);
         updateColor(this.vertexColors, index + 32, c, 0);
 
-        updateColor(this.vertexColors, index + 36, c);
+        updateColor(this.vertexColors, index + 36, c, o);
         updateColor(this.vertexColors, index + 40, c, 0);
-        updateColor(this.vertexColors, index + 44, c);
+        updateColor(this.vertexColors, index + 44, c, o);
 
         // right blur
-        updateColor(this.vertexColors, index + 48, c);
-        updateColor(this.vertexColors, index + 52, c);
+        updateColor(this.vertexColors, index + 48, c, o);
+        updateColor(this.vertexColors, index + 52, c, o);
         updateColor(this.vertexColors, index + 56, c, 0);
 
         updateColor(this.vertexColors, index + 60, c, 0);
-        updateColor(this.vertexColors, index + 64, c);
+        updateColor(this.vertexColors, index + 64, c, o);
         updateColor(this.vertexColors, index + 68, c, 0);
       }
     }
@@ -554,6 +557,14 @@ export class BlurredLine extends Mesh {
       return this.color.clone().multiply(this.colorModifier(p));
     } else {
       return this.color;
+    }
+  }
+
+  _getOpacity(p) {
+    if (this.opacityModifier) {
+      return this.opacity * this.opacityModifier(p);
+    } else {
+      return this.opacity;
     }
   }
 
