@@ -15,6 +15,47 @@ body {
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
+canvas {
+  outline: none;
+}
+
+h1 {
+  font-weight: 300;
+  font-size: 24px;
+  margin-bottom: 0.5em;
+}
+
+h1 a {
+  text-decoration: none;
+}
+
+a {
+  color: #333;
+  transition: color 0.2s ease;
+}
+
+a:visited {
+  color: #555;
+}
+
+a:hover {
+  color: #111;
+}
+
+a:focus-visible {
+  color: #111;
+}
+
+ul {
+  margin: 30px 0px;
+  padding: 0px;
+  line-height: 1.5em;
+}
+
+ul li {
+  list-style-type: none;
+}
+
 #container {
   position: absolute;
   left: 0;
@@ -35,25 +76,34 @@ body {
     calc(50vw - 0px) calc(50vh - 1px);
 }
 
-h1 {
-  font-weight: 300;
-  font-size: 24px;
-  margin-bottom: 0.5em;
-}
-
 #title {
   position: absolute;
-  left: 110px;
-  top: 25px;
+  left: 25px;
+  top: 20px;
+}
+
+#title p {
+  max-width: 350px;
+}
+
+#title .log {
+  font-size: 12px;
 }
 
 #info {
   z-index: 1;
   position: absolute;
-  left: 110px;
+  left: 25px;
   bottom: 40px;
 }
 
-a {
-  color: #333;
+#progress-bar {
+  position: absolute;
+  left: 0px;
+  top: 50vh;
+  width: 0px;
+  height: 5px;
+  background: #666666;
+  z-index: 1;
+  transition: all 0.5s ease;
 }
