@@ -2,11 +2,11 @@
 
 [![NPM Package](https://img.shields.io/npm/v/three.blurredline.svg?style=flat)](https://www.npmjs.com/package/three.blurredline)
 
-Draw lines of varying widths with a soft blurry edge in [THREE.js](https://github.com/mrdoob/three.js/)
+Draw lines of varying width, blur, color and opacity in [THREE.js](https://github.com/mrdoob/three.js/)
 
 This libary draws lines as a mesh and internally creates a BufferGeometry.
 
-It is useful not only for drawing wide soft lines, but also extreme thin lines neatly.
+It is useful not only for drawing wide soft lines, but also extremely thin lines neatly.
 
 ## Examples
 
@@ -26,7 +26,7 @@ It is useful not only for drawing wide soft lines, but also extreme thin lines n
 Include script after THREE is included:
 
 ```js
-<script src="src/BlurredLine.js"></script>
+<script src="src/index.js"></script>
 ```
 
 or include directly from unpkg.com:
@@ -39,6 +39,12 @@ or use npm to install it:
 
 ```
 npm i three.blurredline
+```
+
+or use yarn to install it:
+
+```
+yarn add three.blurredline
 ```
 
 and include it in your code:
