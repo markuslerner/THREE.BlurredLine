@@ -32,7 +32,7 @@ Include script after THREE is included:
 or include directly from unpkg.com:
 
 ```js
-<script src="https://unpkg.com/three.blurredline@1.0.0/src/BlurredLine.js"></script>
+<script src="https://unpkg.com/three.blurredline"></script>
 ```
 
 or use npm to install it:
@@ -155,4 +155,4 @@ See the base [THREE.RawShaderMaterial](https://threejs.org/docs/#api/en/material
 
 MIT licensed
 
-Copyright (C) 2020 Markus Lerner, http://www.markuslerner.com
+Copyright (C) 2021 Markus Lerner, http://www.markuslerner.com
