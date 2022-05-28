@@ -47,6 +47,6 @@
     "prettier": "^2.6.2"
   },
   "peerDependencies": {
-    "three": "^0.139.2"
+    "three": ">= 0.137.0"
   }
 }
