@@ -1,6 +1,6 @@
 {
   "name": "three.blurredline",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "Drawing smooth blurred lines in THREE.js",
   "type": "module",
   "main": "./build/three.blurredline.js",
