@@ -7,11 +7,9 @@
       name="viewport"
       content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
     />
-    <link type="text/css" rel="stylesheet" href="css/main.css" />
+    <link type="text/css" rel="stylesheet" href="css/main.css?v=1.2.3" />
   </head>
   <body>
-    <div id="container"></div>
-
     <div id="title">
       <h1>
         <a href="./index.html">THREE.BlurredLine</a> › All Features Example
@@ -52,7 +50,7 @@
 
       import { BlurredLine, BlurredLineMaterial } from '../src/index.js';
 
-      let container, stats;
+      let stats;
       let camera, clock, scene, renderer;
       let curve,
         curves,
@@ -82,7 +80,9 @@
         this.autoRotate = false;
       };
 
-      container = document.getElementById('container');
+      const container = document.createElement('div');
+      container.setAttribute('id', 'container');
+      document.body.appendChild(container);
 
       // camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 1, 10 );
       // camera.position.z = 2;

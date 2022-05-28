@@ -74,12 +74,14 @@ ul li {
   background-position: calc(50vw - 0px) calc(50vh - 1px),
     calc(50vw - 0px) calc(50vh - 1px), calc(50vw - 0px) calc(50vh - 1px),
     calc(50vw - 0px) calc(50vh - 1px);
+  z-index: 0;
 }
 
 #title {
   position: absolute;
   left: 25px;
   top: 20px;
+  z-index: 1;
 }
 
 #title p {
@@ -95,6 +97,7 @@ ul li {
   position: absolute;
   left: 25px;
   bottom: 40px;
+  z-index: 1;
 }
 
 #progress-bar {
