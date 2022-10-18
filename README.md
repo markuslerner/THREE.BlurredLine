@@ -37,13 +37,13 @@ or include directly from unpkg.com:
 
 or use npm to install it:
 
-```
+```console
 npm i three.blurredline
 ```
 
 or use yarn to install it:
 
-```
+```console
 yarn add three.blurredline
 ```
 
